@@ -1,0 +1,64 @@
+POST http://127.0.0.1:8000/auth-work/signup/
+Content-Type: application/json
+
+{ "username": "adam", "password": "Pass1234!", "email": "adam@mail.com" }
+
+###
+
+POST http://127.0.0.1:8000/auth-work/login/
+Content-Type: application/json
+
+{ "username": "adam", "password": "Pass1234!" }
+
+###
+
+GET http://127.0.0.1:8000/auth-work/test_token/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2MTM0MjgwLCJpYXQiOjE3MjYxMzM5ODAsImp0aSI6IjQ0ZTBmNDJjY2JjYzRiOTdiMzcyMjkyZTI2MjdiY2MwIiwidXNlcl9pZCI6Mn0.5d2r-YFZGCYaK6to0SpwuUBTQ7kjLTkSNQtdhqpDKSI
+
+###
+
+POST http://127.0.0.1:8000/two-factor/generate-qr/
+Content-Type: application/json
+
+###
+
+POST http://127.0.0.1:8000/auth-work/token/refresh/
+Content-Type: application/json
+
+{ "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyNjY3NTM1OCwiaWF0IjoxNzI2NTg4OTU4LCJqdGkiOiI1NDk1NzM4MmY4ZjA0ZGUyODAxNWQxNDYzOTRkMDZmOSIsInVzZXJfaWQiOjV9.yEeWzcqqrz5dERAIRjUGo1cVZoWmddECp_Bm7pGI8m8" }
+
+###
+
+POST http://127.0.0.1:8000/auth-work/token/
+Content-Type: application/json
+
+{ "username": "sozbayra", "password": "1234" }
+
+###
+
+POST http://127.0.0.1:8000/auth-work/exchange_token/
+Content-Type: application/json
+
+{ "code": "502ae6f95e779aa97a994e8b041454d5fd89993528641e9865ed134470ed115a"}
+
+###
+
+POST http://127.0.0.1:8000/auth-work/token/verify/
+Content-Type: application/json
+
+{ "token" : "c6528154edbb04af4ead57e6d233b56f96ea6bd17f3f614802794be43917cc75"}
+
+###
+
+GET http://127.0.0.1:8000/user-manage/user_info/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NTIzOTgwLCJpYXQiOjE3MjY1MjM2ODAsImp0aSI6IjQwNjhhNjM4NjgxYjRkNGE4M2ZlNjE1NTdkM2RhMDY2IiwidXNlcl9pZCI6MTR9.400LHObVnnNOY0MTAESHe3gGvuzI9o10r0nHpO3heYU
+
+###
+
+POST http://127.0.0.1:8000/user-manage/update_user_info/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NTkwMzI5LCJpYXQiOjE3MjY1OTAwMjksImp0aSI6IjQ0ZWRiYjI4NjE0NTQ0Y2ViNzg2ZDJhMzM0MDA0NzcwIiwidXNlcl9pZCI6NX0.g0HQyaqSt0lTzEIVPZcHmPP4HuAXWD92UgOCGR8B_Cw
+
+{ "email": "sinaeren02@hotmail.com"}
