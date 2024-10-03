@@ -5,6 +5,8 @@ import { loadSocialPage } from "./views/socialPage.js";
 import { isUserAuthenticated } from "./utils/tokenFuncs.js";
 import { getOauthUser } from "./utils/tokenFuncs.js";
 import { loadSignupPage } from "./views/signupPage.js";
+import { loadChatRoom } from "./views/chatRoom.js";
+import { webSocket } from "./utils/webSocket.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const appElement = document.getElementById("app");
@@ -14,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     social: () => loadSocialPage(appElement),
     login: () => loadLoginPage(appElement),
     signup: () => loadSignupPage(appElement),
+    chat_room: () => loadChatRoom(appElement),
   };
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
@@ -25,28 +28,35 @@ document.addEventListener("DOMContentLoaded", () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ "code": code }),
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error("Token exchange failed");
-      }
-      return response.json();
-    }).then((data) => {
-      localStorage.setItem("oauth_access_token", data.access_token);
-      localStorage.setItem("oauth_refresh_token", data.refresh_token);1
-  })
-  .then(() => {
-    getOauthUser();
-  })
-}
+      body: JSON.stringify({ code: code }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Token exchange failed");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        localStorage.setItem("oauth_access_token", data.access_token);
+        localStorage.setItem("oauth_refresh_token", data.refresh_token);
+        1;
+      })
+      .then(() => {
+        getOauthUser();
+      });
+  }
 
   async function checkRouteAndLoadPage() {
     const routeName = window.location.hash.substring(1) || "home";
 
-    if (!(await isUserAuthenticated()) && (routeName !== "login" && routeName !== "signup")) {
+    if (
+      !(await isUserAuthenticated()) &&
+      routeName !== "login" &&
+      routeName !== "signup"
+    ) {
       window.location.hash = "login";
       return;
-    }
+    } else if (await isUserAuthenticated()) webSocket();
 
     loadPage(routeName);
   }

@@ -10,4 +10,4 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Profile
-        fields = ['bio', 'phone_number', 'two_factor_auth', 'two_factor_auth_secret', 'profile_picture']
+        fields = ['bio', 'phone_number', 'two_factor_auth', 'two_factor_auth_secret', 'profile_picture', 'online_status']

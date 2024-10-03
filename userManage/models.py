@@ -10,6 +10,7 @@ class Profile(models.Model):
     two_factor_auth = models.BooleanField(default=False)
     two_factor_auth_secret = models.CharField(max_length=100, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    online_status = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user.username} Profile'

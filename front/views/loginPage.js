@@ -47,6 +47,7 @@ async function handleLogin(event) {
   event.preventDefault(); // Prevent default form submission
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
+  localStorage.setItem("username", username);
 
   await fetch("http://127.0.0.1:8000/auth-work/login/", {
     method: "POST",
@@ -57,7 +58,6 @@ async function handleLogin(event) {
   })
     .then((response) => {
       if (response.status === 401) {
-        localStorage.setItem("username", username);
         const twoFaModal = new bootstrap.Modal(document.getElementById("2faModal"));
         twoFaModal.show();
         return;

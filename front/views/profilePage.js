@@ -3,8 +3,9 @@ export function loadProfilePage(appElement) {
       <div class="container mt-5">
           <h1 class="text-center mb-4">Profil Sayfası</h1>
           <div class="card p-4">
-              <div class="text-center mb-3">
+              <div class="text-center mb-3 position-relative">
                   <img id="profile-picture" src="" class="rounded-circle" alt="Profil Resmi" style="width: 150px; height: 150px; object-fit: cover;">
+                  <span id="status-indicator" class="position-absolute bottom-0 end-0 translate-middle p-2 border border-light rounded-circle" style="background-color: grey; width: 15px; height: 15px;"></span>
                   <div class="mt-2">
                       <button id="change-picture" class="btn btn-primary">Profil Resmini Değiştir</button>
                       <input type="file" id="upload-picture" style="display: none;">
@@ -106,6 +107,7 @@ function setupProfilePage() {
   const qrStep = document.getElementById("qr-step");
   const codeStep = document.getElementById("code-step");
   const loadingAnimation = document.getElementById("loading-animation");
+  const statusIndicator = document.getElementById("status-indicator");
 
   // İlk adımda QR kodu gösteriliyor
   nextStepButton.addEventListener("click", () => {
@@ -182,6 +184,9 @@ function setupProfilePage() {
           enable2FAButton.innerHTML = "2FA Enabled";
           enable2FAButton.disabled = true;
         }
+        if (data.profile.online_status)
+          statusIndicator.style.backgroundColor = "green";
+        else statusIndicator.style.backgroundColor = "grey";
       })
       .catch((error) => console.error("Error loading profile:", error));
   }

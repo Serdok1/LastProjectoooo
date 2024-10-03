@@ -1,6 +1,9 @@
 # consumers.py
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from asgiref.sync import sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -44,3 +47,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+
+
+class setStatusConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        await self.accept()
+
+    # Fetch the user asynchronously
+    @sync_to_async
+    def get_user(self, username):
+        try:
+            return User.objects.get(username=username)
+        except ObjectDoesNotExist:
+            return None
+
+    # Save the user's profile asynchronously
+    @sync_to_async
+    def set_user_online_status(self, user, status):
+        user.profile.online_status = status
+        user.profile.save()
+
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        username = text_data_json.get('user')
+
+        if username:
+            # Fetch user asynchronously
+            user = await self.get_user(username)
+            if user:
+                print(user)  # This will print the user if found
+                # Update the user's profile status asynchronously
+                await self.set_user_online_status(user, True)
+            else:
+                print(f"User with username '{username}' does not exist.")
+        else:
+            print("No username provided.")
+
+    async def disconnect(self, close_code):
+        pass
