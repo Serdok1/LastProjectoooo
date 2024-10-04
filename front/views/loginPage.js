@@ -47,6 +47,7 @@ async function handleLogin(event) {
   event.preventDefault(); // Prevent default form submission
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
+  localStorage.clear();
   localStorage.setItem("username", username);
 
   await fetch("http://127.0.0.1:8000/auth-work/login/", {
@@ -107,7 +108,6 @@ async function handle2faSubmit() {
     })
     .then((data) => {
       // Store tokens after successful 2FA verification
-      localStorage.removeItem("username");
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
       window.location.hash = "home"; // Redirect to the homepage

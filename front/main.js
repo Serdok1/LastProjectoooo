@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((data) => {
         localStorage.setItem("oauth_access_token", data.access_token);
         localStorage.setItem("oauth_refresh_token", data.refresh_token);
-        1;
       })
       .then(() => {
         getOauthUser();

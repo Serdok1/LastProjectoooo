@@ -23,6 +23,7 @@ export async function webSocket() {
   
       chatSocket.send(
         JSON.stringify({
+          status: "online",
           user: localStorage.getItem("username"),
         })
       );
@@ -51,5 +52,15 @@ export async function webSocket() {
       */
     } catch (error) {
       console.error("Failed to establish WebSocket connection", error);
+    }
+
+    window.onbeforeunload = function () {
+      chatSocket.send(
+        JSON.stringify({
+          status: "offline",
+          user: localStorage.getItem("username"),
+        })
+      );
+      chatSocket.close();
     }
   }

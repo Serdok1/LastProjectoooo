@@ -70,6 +70,8 @@ class setStatusConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         username = text_data_json.get('user')
+        status = text_data_json.get('status')
+        status_bool = True if status == 'online' else False
 
         if username:
             # Fetch user asynchronously
@@ -77,11 +79,11 @@ class setStatusConsumer(AsyncWebsocketConsumer):
             if user:
                 print(user)  # This will print the user if found
                 # Update the user's profile status asynchronously
-                await self.set_user_online_status(user, True)
+                await self.set_user_online_status(user, status_bool)
             else:
                 print(f"User with username '{username}' does not exist.")
         else:
             print("No username provided.")
 
     async def disconnect(self, close_code):
-        pass
+        self.close()

@@ -110,6 +110,7 @@ def login_with_oauth(request):
         return Response({
             'access_token': str(refresh.access_token),
             'refresh_token': str(refresh),
+            'username': str(username),
         }, status=status.HTTP_200_OK)
     
     # Return the error message from the 42 API

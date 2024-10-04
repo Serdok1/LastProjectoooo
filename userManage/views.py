@@ -7,6 +7,8 @@ from .serializers import UserSerializer, ProfileSerializer
 import os
 from django.conf import settings
 from django.http import FileResponse
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -83,3 +85,19 @@ def get_default_pp(request):
         return FileResponse(open(default_pp_path, 'rb'), content_type='image/png')
     except FileNotFoundError:
         return Response({"error": "Default profile picture not found"}, status=404)
+    
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_profile(request):
+    if(request.GET.get('username')):
+        user = get_object_or_404(User ,username=request.GET.get('username'))
+    else:
+        user = get_object_or_404(User ,username=request.user)
+    userSerializer = UserSerializer(user)
+    profileSerializer = ProfileSerializer(user.profile)
+    return Response({
+        'user': userSerializer.data,
+        'profile': profileSerializer.data
+    })

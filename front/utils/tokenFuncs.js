@@ -63,6 +63,7 @@ export async function getOauthUser() {
     .then((data) => {
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("refresh_token", data.refresh_token);
+      localStorage.setItem("username", data.username);
       //clear url params
       window.history.replaceState({}, document.title, "/" + "front/");
       window.location.hash = "home";
