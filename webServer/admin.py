@@ -1,3 +1,4 @@
 from django.contrib import admin
+from .models import room_table
 
-# Register your models here.
+admin.site.register(room_table)

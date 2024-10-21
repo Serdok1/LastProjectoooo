@@ -9,6 +9,7 @@ from django.conf import settings
 from django.http import FileResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from webServer.models import room_table
 
 # Create your views here.
 
@@ -101,3 +102,127 @@ def get_user_profile(request):
         'user': userSerializer.data,
         'profile': profileSerializer.data
     })
+
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def send_friend_request(request):
+    friend_username = request.data.get('friend_username')
+    friend = get_object_or_404(User, username=friend_username)
+    user = request.user
+    user.social.friendRequest.add(friend)
+    user.social.save()
+    friend.social.friendRequestSent.add(user)
+    friend.social.save()
+    return Response("Friend request sent successfully!", status=200)
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def accept_friend_request(request):
+    friend_username = request.data.get('friend_username')
+    friend = get_object_or_404(User, username=friend_username)
+    user = request.user
+    if friend not in user.social.friendRequest.all():
+        return Response("Friend request not found!", status=404)
+    user.social.friendRequestSent.remove(friend)
+    user.social.friendList.add(friend)
+    user.social.save()
+    friend.social.friendRequest.remove(user)
+    friend.social.friendList.add(user)
+    friend.social.save()
+    if(user.id > friend.id):
+        room_id = f'{user.id}_{friend.id}'
+        room_key = f'{user.social.secret_key}_{friend.social.secret_key}'
+    else:
+        room_id = f'{friend.id}_{user.id}'
+        room_key = f'{friend.social.secret_key}_{user.social.secret_key}'
+    room_table(room_id=room_id, secret_key=room_key).save()
+    return Response("Friend request accepted successfully!", status=200)
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def decline_friend_request(request):
+    friend_username = request.data.get('friend_username')
+    friend = get_object_or_404(User, username=friend_username)
+    user = request.user
+    user.social.friendRequestSent.remove(friend)
+    user.social.save()
+    friend.social.friendRequest.remove(user)
+    friend.social.save()
+    return Response("Friend request declined successfully!", status=200)
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def remove_friend(request):
+    friend_username = request.data.get('friend_username')
+    friend = get_object_or_404(User, username=friend_username)
+    user = request.user
+    user.social.friendList.remove(friend)
+    user.social.save()
+    friend.social.friendList.remove(user)
+    friend.social.save()
+    return Response("Friend removed successfully!", status=200)
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_friends(request):
+    user = request.user
+    friends = user.social.friendList.all()
+    friends_list = []
+    for friend in friends:
+        friends_list.append
+        ({
+            'username': friend.username,
+            'first_name': friend.first_name,
+            'last_name': friend.last_name,
+            'email': friend.email,
+            'phone_number': friend.profile.phone_number,
+            'bio': friend.profile.bio,
+            'profile_picture': friend.profile.profile_picture.url
+        })
+    return Response(friends_list)
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_friend_requests(request):
+    user = request.user
+    friend_requests = user.social.friendRequest.all()
+    friend_requests_list = []
+    for friend in friend_requests:
+        friend_requests_list.append
+        ({
+            'username': friend.username,
+            'first_name': friend.first_name,
+            'last_name': friend.last_name,
+            'email': friend.email,
+            'phone_number': friend.profile.phone_number,
+            'bio': friend.profile.bio,
+            'profile_picture': friend.profile.profile_picture.url
+        })
+    return Response(friend_requests_list)
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_sent_friend_requests(request):
+    user = request.user
+    friend_requests = user.social.friendRequestSent.all()
+    friend_requests_list = []
+    for friend in friend_requests:
+        friend_requests_list.append
+        ({
+            'username': friend.username,
+            'first_name': friend.first_name,
+            'last_name': friend.last_name,
+            'email': friend.email,
+            'phone_number': friend.profile.phone_number,
+            'bio': friend.profile.bio,
+            'profile_picture': friend.profile.profile_picture.url
+        })
+    return Response(friend_requests_list)

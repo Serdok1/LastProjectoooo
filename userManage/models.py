@@ -28,3 +28,11 @@ class SiteConfig(models.Model):
     class Meta:
         verbose_name = "Site Configuration"
         verbose_name_plural = "Site Configurations"
+
+class Social(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    friendList = models.ManyToManyField(User, related_name='friendList', blank=True)
+    friendRequest = models.ManyToManyField(User, related_name='friendRequest', blank=True)
+    friendRequestSent = models.ManyToManyField(User, related_name='friendRequestSent', blank=True)
+    blockedUsers = models.ManyToManyField(User, related_name='blockedUsers', blank=True)
+    secret_key = models.CharField(max_length=100, blank=True, null=True)

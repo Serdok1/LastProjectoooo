@@ -14,6 +14,8 @@ from django.conf import settings
 import requests
 from django.http import JsonResponse
 from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os as uos
 
 from .utils.savePP import save_profile_picture
 
@@ -33,6 +35,8 @@ def signup(request):
         user.save()
         user.profile.phone_number = request.data.get('phone_number')
         user.profile.save()
+        user.social.secret_key = uos.urandom(16).hex()
+        user.social.save()
         new_pp = request.FILES.get('profile_picture')
 
         if new_pp:
@@ -46,6 +50,7 @@ def signup(request):
         return Response({
             'refresh_token': str(refresh),
             'access_token': str(refresh.access_token),
+            'secret_key': user.social.secret_key,
         })
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -65,6 +70,7 @@ def login(request):
     return Response({
         'refresh_token': str(refresh),
         'access_token': str(refresh.access_token),
+        'secret_key': user.social.secret_key,
     })
 
 @api_view(['POST'])
@@ -97,6 +103,8 @@ def login_with_oauth(request):
             if user_data['phone'] != "hidden":
                 user.profile.phone_number = user_data['phone']
             user.profile.save()
+            user.social.secret_key = uos.urandom(16).hex()
+            user.social.save()
 
             #check if 2fa enabled
         if user.profile.two_factor_auth:
@@ -111,6 +119,7 @@ def login_with_oauth(request):
             'access_token': str(refresh.access_token),
             'refresh_token': str(refresh),
             'username': str(username),
+            'secret_key': user.social.secret_key,
         }, status=status.HTTP_200_OK)
     
     # Return the error message from the 42 API

@@ -101,6 +101,7 @@ export function loadSignupPage(appElement) {
 
       // Create a FormData object to send form data including files
       const formData = new FormData();
+      var username = document.getElementById("username").value;
       formData.append("username", document.getElementById("username").value);
       formData.append("email", document.getElementById("email").value);
       formData.append("password", document.getElementById("password").value);
@@ -129,6 +130,7 @@ export function loadSignupPage(appElement) {
           console.log("Signup successful!");
           localStorage.setItem("access_token", data.access_token);
           localStorage.setItem("refresh_token", data.refresh_token);
+          localStorage.setItem("username", username);
           window.location.hash = "home";
         })
         .catch((error) => {

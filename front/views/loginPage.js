@@ -1,4 +1,8 @@
 import { getCSRFToken } from "../utils/getCsrfToken.js";
+
+//This func have to 
+const auth_url = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-2cd6b7a34b37658613acc6e94864cf6f6e6513cd4d0ed35cf88fc6ff2c4f619f&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500%2Ffront%2F&response_type=code"
+
 export function loadLoginPage(appElement) {
   appElement.innerHTML = `
           <h1>Login</h1>
@@ -82,9 +86,7 @@ async function handleLogin(event) {
 }
 
 function handleLoginWith42() {
-  const authUrl = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d6c2cb57496404dab82b9aec96d96cbb6793bb5005632c3cf384a17bf7b8e98f&redirect_uri=http%3A%2F%2F127.0.0.1%3A5500%2Ffront%2F&response_type=code`;
-
-  window.location.href = authUrl; // Redirect to 42's OAuth page
+  window.location.href = auth_url; // Redirect to 42's OAuth page
 }
 
 async function handle2faSubmit() {

@@ -60,6 +60,7 @@ export function loadSocialPage(appElement) {
                         <p id="bio" class="text-muted">Bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                         <p id="email">Email: user@example.com</p>
                       </div>
+                      <button class="btn btn-primary ms-auto">Add Friend</button>
                     </div>
                     <div class="row mt-4">
                       <div class="col-md-4 text-center">

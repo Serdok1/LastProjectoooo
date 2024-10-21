@@ -62,3 +62,19 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI2NTkwMzI5LCJpYXQiOjE3MjY1OTAwMjksImp0aSI6IjQ0ZWRiYjI4NjE0NTQ0Y2ViNzg2ZDJhMzM0MDA0NzcwIiwidXNlcl9pZCI6NX0.g0HQyaqSt0lTzEIVPZcHmPP4HuAXWD92UgOCGR8B_Cw
 
 { "email": "sinaeren02@hotmail.com"}
+
+###
+
+POST http://127.0.0.1:8000/user-manage/send_friend_request/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5MzUxMjMyLCJqdGkiOiI4ODI5MzczNzM2ZmQ0N2MyYmMxYjM4ODRjYzRjMDkzMCIsInVzZXJfaWQiOjU1fQ.VVgLsyLkZ0oEioOf6pGcDjVpAmvXqcS58kiiue8d5jU
+
+{ "friend_username": "sozbayra"}
+
+###
+
+POST http://127.0.0.1:8000/user-manage/accept_friend_request/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5MzUxODYyLCJqdGkiOiIzZDQ0ZjljYzVjNzU0MGJjODRlMjdjMDMzMDEwYTRmNiIsInVzZXJfaWQiOjU2fQ.noZZU9UQTWYOg5hFxcwoGAIbfiuGkl94qZo5j8ttblg
+
+{ "friend_username": "Khalii"}
