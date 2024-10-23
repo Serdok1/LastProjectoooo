@@ -60,7 +60,7 @@ export function loadSocialPage(appElement) {
                         <p id="bio" class="text-muted">Bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                         <p id="email">Email: user@example.com</p>
                       </div>
-                      <button class="btn btn-primary ms-auto">Add Friend</button>
+                      <button id="add-friend-btn" class="btn btn-primary ms-auto">Add Friend</button>
                     </div>
                     <div class="row mt-4">
                       <div class="col-md-4 text-center">
@@ -138,4 +138,22 @@ function loadProfile(getUser) {
       }
     })
     .catch((error) => console.error("Error loading profile:", error));
+
+  //add friend
+  document.getElementById("add-friend-btn").addEventListener("click", () => {
+    const url = "http://127.0.0.1:8000/user-manage/send_friend_request/";
+    const token = localStorage.getItem("access_token");
+    const friend_username = document.getElementById("username").textContent;
+    fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ friend_username }),
+    })
+      .then((response) => console.log(response.json()))
+      .catch((error) => console.error("Error sending friend request:", error));
+  });
 }

@@ -110,6 +110,12 @@ def get_user_profile(request):
 def send_friend_request(request):
     friend_username = request.data.get('friend_username')
     friend = get_object_or_404(User, username=friend_username)
+    if friend == request.user:
+        return Response("You can't send a friend request to yourself!", status=400)
+    if friend in request.user.social.friendList.all():
+        return Response("You are already friends with this user!", status=400)
+    if friend in request.user.social.friendRequest.all():
+        return Response("Friend request already sent!", status=400)
     user = request.user
     user.social.friendRequest.add(friend)
     user.social.save()
