@@ -5,7 +5,6 @@ import { loadSocialPage } from "./views/socialPage.js";
 import { isUserAuthenticated } from "./utils/tokenFuncs.js";
 import { getOauthUser } from "./utils/tokenFuncs.js";
 import { loadSignupPage } from "./views/signupPage.js";
-import { loadChatRoom } from "./views/chatRoom.js";
 import { webSocket } from "./utils/webSocket.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
     social: () => loadSocialPage(appElement),
     login: () => loadLoginPage(appElement),
     signup: () => loadSignupPage(appElement),
-    chat_room: () => loadChatRoom(appElement),
   };
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");

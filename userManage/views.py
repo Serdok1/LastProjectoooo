@@ -117,9 +117,9 @@ def send_friend_request(request):
     if friend in request.user.social.friendRequest.all():
         return Response("Friend request already sent!", status=400)
     user = request.user
-    user.social.friendRequest.add(friend)
+    user.social.friendRequestSent.add(friend)
     user.social.save()
-    friend.social.friendRequestSent.add(user)
+    friend.social.friendRequest.add(user)
     friend.social.save()
     return Response("Friend request sent successfully!", status=200)
 
@@ -132,10 +132,10 @@ def accept_friend_request(request):
     user = request.user
     if friend not in user.social.friendRequest.all():
         return Response("Friend request not found!", status=404)
-    user.social.friendRequestSent.remove(friend)
+    user.social.friendRequest.remove(friend)
     user.social.friendList.add(friend)
     user.social.save()
-    friend.social.friendRequest.remove(user)
+    friend.social.friendRequestSent.remove(user)
     friend.social.friendList.add(user)
     friend.social.save()
     if(user.id > friend.id):
@@ -154,9 +154,9 @@ def decline_friend_request(request):
     friend_username = request.data.get('friend_username')
     friend = get_object_or_404(User, username=friend_username)
     user = request.user
-    user.social.friendRequestSent.remove(friend)
+    user.social.friendRequest.remove(friend)
     user.social.save()
-    friend.social.friendRequest.remove(user)
+    friend.social.friendRequestSent.remove(user)
     friend.social.save()
     return Response("Friend request declined successfully!", status=200)
 
@@ -171,6 +171,13 @@ def remove_friend(request):
     user.social.save()
     friend.social.friendList.remove(user)
     friend.social.save()
+    if(user.id > friend.id):
+        room_id = f'{user.id}_{friend.id}'
+        room_key = f'{user.social.secret_key}_{friend.social.secret_key}'
+    else:
+        room_id = f'{friend.id}_{user.id}'
+        room_key = f'{friend.social.secret_key}_{user.social.secret_key}'
+    room_table.objects.filter(room_id=room_id).delete()
     return Response("Friend removed successfully!", status=200)
 
 @api_view(['GET'])
@@ -181,15 +188,15 @@ def get_friends(request):
     friends = user.social.friendList.all()
     friends_list = []
     for friend in friends:
-        friends_list.append
-        ({
+        friends_list.append({
             'username': friend.username,
             'first_name': friend.first_name,
             'last_name': friend.last_name,
             'email': friend.email,
             'phone_number': friend.profile.phone_number,
             'bio': friend.profile.bio,
-            'profile_picture': friend.profile.profile_picture.url
+            'profile_picture': friend.profile.profile_picture.url,
+            'id': friend.id
         })
     return Response(friends_list)
 
@@ -201,8 +208,7 @@ def get_friend_requests(request):
     friend_requests = user.social.friendRequest.all()
     friend_requests_list = []
     for friend in friend_requests:
-        friend_requests_list.append
-        ({
+        friend_requests_list.append({
             'username': friend.username,
             'first_name': friend.first_name,
             'last_name': friend.last_name,
@@ -221,8 +227,7 @@ def get_sent_friend_requests(request):
     friend_requests = user.social.friendRequestSent.all()
     friend_requests_list = []
     for friend in friend_requests:
-        friend_requests_list.append
-        ({
+        friend_requests_list.append({
             'username': friend.username,
             'first_name': friend.first_name,
             'last_name': friend.last_name,

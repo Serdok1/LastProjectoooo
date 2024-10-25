@@ -51,6 +51,7 @@ def signup(request):
             'refresh_token': str(refresh),
             'access_token': str(refresh.access_token),
             'secret_key': user.social.secret_key,
+            'user_id': user.id,
         })
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -71,6 +72,7 @@ def login(request):
         'refresh_token': str(refresh),
         'access_token': str(refresh.access_token),
         'secret_key': user.social.secret_key,
+        'user_id': user.id,
     })
 
 @api_view(['POST'])
@@ -120,6 +122,7 @@ def login_with_oauth(request):
             'refresh_token': str(refresh),
             'username': str(username),
             'secret_key': user.social.secret_key,
+            'user_id': user.id,
         }, status=status.HTTP_200_OK)
     
     # Return the error message from the 42 API

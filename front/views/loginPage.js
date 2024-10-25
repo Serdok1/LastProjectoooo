@@ -76,6 +76,9 @@ async function handleLogin(event) {
         // Store tokens
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("refresh_token", data.refresh_token);
+        localStorage.setItem("user_id", data.user_id);
+        localStorage.setItem("user_secret", data.secret_key);
+        localStorage.s
         window.location.hash = "home"; // Redirect on successful login
       }
     })
@@ -112,6 +115,8 @@ async function handle2faSubmit() {
       // Store tokens after successful 2FA verification
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
+      localStorage.setItem("user_id", data.user_id);
+      localStorage.setItem("user_secret", data.secret_key);
       window.location.hash = "home"; // Redirect to the homepage
     })
     .catch((error) => {
