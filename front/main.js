@@ -7,8 +7,10 @@ import { getOauthUser } from "./utils/tokenFuncs.js";
 import { loadSignupPage } from "./views/signupPage.js";
 import { webSocket } from "./utils/webSocket.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const appElement = document.getElementById("app");
+
+  // Rota tanımları
   const routes = {
     home: () => loadHomePage(appElement),
     profile: () => loadProfilePage(appElement),
@@ -16,57 +18,67 @@ document.addEventListener("DOMContentLoaded", () => {
     login: () => loadLoginPage(appElement),
     signup: () => loadSignupPage(appElement),
   };
+
+  // OAuth token değişimi
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
 
   if (code) {
     localStorage.setItem("oauth_token", code);
-    fetch("http://127.0.0.1:8000/auth-work/exchange_token/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code: code }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Token exchange failed");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        localStorage.setItem("oauth_access_token", data.access_token);
-        localStorage.setItem("oauth_refresh_token", data.refresh_token);
-      })
-      .then(() => {
-        getOauthUser();
+    try {
+      const response = await fetch("http://127.0.0.1:8000/auth-work/exchange_token/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code }),
       });
+
+      if (!response.ok) throw new Error("Token exchange failed");
+
+      const data = await response.json();
+      localStorage.setItem("oauth_access_token", data.access_token);
+      localStorage.setItem("oauth_refresh_token", data.refresh_token);
+
+      await getOauthUser();
+    } catch (error) {
+      console.error("Error during token exchange:", error);
+      alert("Token exchange failed: " + error.message);
+    }
   }
 
+  // Rota kontrolü ve sayfa yükleme fonksiyonu
   async function checkRouteAndLoadPage() {
     const routeName = window.location.hash.substring(1) || "home";
 
-    if (
-      !(await isUserAuthenticated()) &&
-      routeName !== "login" &&
-      routeName !== "signup"
-    ) {
-      window.location.hash = "login";
-      return;
-    } else if (await isUserAuthenticated()) webSocket();
-
-    loadPage(routeName);
+    try {
+      const authenticated = await isUserAuthenticated();
+      if (!authenticated && routeName !== "login" && routeName !== "signup") {
+        window.location.hash = "login";
+        return;
+      } else if (authenticated) {
+        await webSocket();
+      }
+      loadPage(routeName);
+    } catch (error) {
+      console.error("Authentication check failed:", error);
+      alert("An error occurred while checking authentication: " + error.message);
+    }
   }
 
+  // Rota değişikliklerini dinleyin
   window.addEventListener("hashchange", checkRouteAndLoadPage);
-  checkRouteAndLoadPage();
 
+  // İlk sayfa yüklemesi
+  await checkRouteAndLoadPage();
+
+  // Sayfa yükleme fonksiyonu
   function loadPage(routeName) {
     const pageLoader = routes[routeName];
     if (pageLoader) {
       pageLoader();
     } else {
-      loadHomePage();
+      loadHomePage(appElement);
     }
   }
 });

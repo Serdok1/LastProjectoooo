@@ -196,7 +196,8 @@ def get_friends(request):
             'phone_number': friend.profile.phone_number,
             'bio': friend.profile.bio,
             'profile_picture': friend.profile.profile_picture.url,
-            'id': friend.id
+            'id': friend.id,
+            'online_status': friend.profile.online_status,
         })
     return Response(friends_list)
 

@@ -25,8 +25,9 @@ Content-Type: application/json
 
 POST http://127.0.0.1:8000/auth-work/token/refresh/
 Content-Type: application/json
+Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMDE0MDc3OCwianRpIjoiODA2YjM3NWY0OTJlNGEwM2I2MDg0OWVjNmM3NjM3YjgiLCJ1c2VyX2lkIjoxfQ.p--IeIaAmJ3ezMrwoBNUnuJL2l5SzFhM0ru_N5v3MAY"
 
-{ "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcyNjY3NTM1OCwiaWF0IjoxNzI2NTg4OTU4LCJqdGkiOiI1NDk1NzM4MmY4ZjA0ZGUyODAxNWQxNDYzOTRkMDZmOSIsInVzZXJfaWQiOjV9.yEeWzcqqrz5dERAIRjUGo1cVZoWmddECp_Bm7pGI8m8" }
+{ "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTczMDE0MDc3OCwianRpIjoiODA2YjM3NWY0OTJlNGEwM2I2MDg0OWVjNmM3NjM3YjgiLCJ1c2VyX2lkIjoxfQ.p--IeIaAmJ3ezMrwoBNUnuJL2l5SzFhM0ru_N5v3MAY" }
 
 ###
 
