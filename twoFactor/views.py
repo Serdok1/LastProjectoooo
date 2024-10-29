@@ -26,7 +26,9 @@ def token_after_2fa(request):
         refresh = RefreshToken.for_user(user)
         return Response({
             "access": str(refresh.access_token),
-            "refresh": str(refresh)
+            "refresh": str(refresh),
+            "user_id": user.id,
+            "secret_key": user.social.secret_key,
         }, status=200)
     return Response("Invalid OTP, please try again!", status=400)
 

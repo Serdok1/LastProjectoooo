@@ -1,5 +1,13 @@
 from django.urls import path
-from .views import signup, login, test_token, refresh_token_custom, exchange_token, login_with_oauth
+from .views import (
+    signup,
+    login,
+    test_token,
+    refresh_token_custom,
+    exchange_token,
+    login_with_oauth,
+    oauth_after_2fa,
+)
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -16,4 +24,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('exchange_token/', exchange_token, name='exchange_token'),
+    path('oauth_after_2fa/', oauth_after_2fa, name='oauth_after_2fa'),
 ]

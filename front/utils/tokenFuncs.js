@@ -1,3 +1,5 @@
+import  { createTwoFAModal } from "./twoFAModule.js";
+
 // Function to check if the user is authenticated
 export async function isUserAuthenticated() {
   const access_token = localStorage.getItem("access_token");
@@ -68,7 +70,12 @@ export async function getOauthUser() {
       body: JSON.stringify({ oauth_access_token: oauthAccessToken }),
     });
 
-    if (!response.ok) throw new Error("Error getting user data");
+    if(response.status === 401) {
+      // If 2FA is enabled, create a 2FA modal
+      createTwoFAModal(2);
+      return;
+    }
+    else if (!response.ok) throw new Error("Error getting user data");
 
     // Store tokens and user info if successful
     const data = await response.json();

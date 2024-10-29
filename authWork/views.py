@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import os as uos
+import pyotp
 
 from .utils.savePP import save_profile_picture
 
@@ -127,6 +128,47 @@ def login_with_oauth(request):
     
     # Return the error message from the 42 API
     return Response({"error": "Failed to authenticate with 42 API"}, status=response.status_code)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def oauth_after_2fa(request):
+    oauth_access_token = request.data.get('oauth_access_token')
+
+    if not oauth_access_token:
+        return Response({"error": "OAuth access token is required."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Add "Bearer " prefix to the access token
+    response = requests.get(
+        "https://api.intra.42.fr/v2/me",
+        headers={"Authorization": f"Bearer {oauth_access_token}"}
+    )
+    
+    if response.status_code == 200:
+        user_data = response.json()
+        username = user_data['login']
+        
+        # Create or get the user
+        user = get_object_or_404(User, username=username)
+        # Issue JWT tokens after successful OTP verification
+        token = request.data['otp_token']
+        totp = pyotp.TOTP(user.profile.two_factor_auth_secret)
+        
+        if totp.verify(token):
+            # Generate JWT tokens for the user
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'access_token': str(refresh.access_token),
+                'refresh_token': str(refresh),
+                'username': str(username),
+                'secret_key': user.social.secret_key,
+                'user_id': user.id,
+            }, status=status.HTTP_200_OK)
+            refresh = RefreshToken.for_user(user)
+        return Response("Invalid OTP, please try again!", status=400)
+    # Return the error message from the 42 API
+    return Response({"error": "Failed to authenticate with 42 API"}, status=response.status_code)
+
+    
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
