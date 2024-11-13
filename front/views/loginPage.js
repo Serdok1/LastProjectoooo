@@ -6,21 +6,35 @@ import { handleLogin } from "../functions/loginPage/handleLogin.js";
 
 export function loadLoginPage(appElement) {
   appElement.innerHTML = `
-          <h1>Login</h1>
-          <form id="loginForm">
-            <div class="mb-3">
-              <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="username" required>
+  <link rel="stylesheet" href="styles/loginPage.css">
+          <body>
+          <div id="container">
+            <div id="background-shapes">
+              <div class="shape shape-top-left"></div>
+              <div class="shape shape-bottom-left"></div>
+              <div class="shape shape-circle-left"></div>
+              <div class="shape shape-circle-right"></div>
             </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" required>
+            <form id="loginForm">
+                <input id="form-input-user" class="form-input" type="text" placeholder="Username" required>
+                <input type="password" id="form-input-pass" class="form-input" placeholder="Password" required>
+                <button type="submit" class="" id="submit-button">Login</button>
+              </form>
+              <div id="rightArea">
+                <div id="loginWith">
+                  <div id="pArea">
+                    <p id="big-text">You can log in with your 42 credentials.</p>
+                    <p id="small-text" >*You will be redirected to 42’s authorization page</p>
+                  </div>
+                  <button id="loginWith42" >Login with 42</button>
+                </div>
+                <div id="signupArea">
+                  <p id="big-text" >if you still dont have an account yet you can create one ! </p>
+                  <button id="signupButton">Create one</button>
+                </div>
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-          </form>
-           <button id="loginWith42" class="btn btn-danger mt-3">Login with 42</button>
-          <p id="loginError" class="text-danger"></p>
-          <button id="signupButton" class="btn btn-link">Don't have an account? Sign up!</button>
+          </body>
         `;
 
   document.getElementById("loginForm").addEventListener("submit", handleLogin);

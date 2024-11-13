@@ -1,4 +1,5 @@
 import { getCSRFToken } from "../utils/getCsrfToken.js";
+import { alertSystem } from "./alertSystem.js";
 
 export function createTwoFAModal(mode_selector) {
   const modal = document.createElement("div");
@@ -63,7 +64,7 @@ async function handle2faSubmit() {
     })
     .catch((error) => {
       console.error("Error during 2FA verification:", error);
-      alert("Invalid 2FA code, please try again.");
+      alertSystem.showAlert("Invalid 2FA code, please try again.");
     })
     .finally(() => {
       window.location.reload();
@@ -105,7 +106,7 @@ async function handleTwoFAOauth() {
     })
     .catch((error) => {
       console.error("Error during 2FA verification:", error);
-      alert("Invalid 2FA code, please try again.");
+      alertSystem.showAlert("Invalid 2FA code, please try again.");
     })
     .finally(() => {
       window.location.reload();

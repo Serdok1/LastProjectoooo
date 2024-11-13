@@ -92,15 +92,24 @@ def get_default_pp(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):
+    self = request.user
     if(request.GET.get('username')):
         user = get_object_or_404(User ,username=request.GET.get('username'))
     else:
         user = get_object_or_404(User ,username=request.user)
+
     userSerializer = UserSerializer(user)
     profileSerializer = ProfileSerializer(user.profile)
+    
+    if user in self.social.friendList.all():
+        is_friend = True
+    else:
+        is_friend = False
+    
     return Response({
         'user': userSerializer.data,
-        'profile': profileSerializer.data
+        'profile': profileSerializer.data,
+        'is_friend': is_friend
     })
 
 

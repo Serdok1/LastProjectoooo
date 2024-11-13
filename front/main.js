@@ -6,8 +6,26 @@ import { isUserAuthenticated } from "./utils/tokenFuncs.js";
 import { getOauthUser } from "./utils/tokenFuncs.js";
 import { loadSignupPage } from "./views/signupPage.js";
 import { webSocket } from "./utils/webSocket.js";
+import { game_with_ai } from "./game/with_ai/game_with_ai.js";
+import { game_tournament } from "./game/tournament/tournament.js";
+import { alertSystem } from "./utils/alertSystem.js";
+import { loadUserProfile } from "./functions/socialPage/loadProfile.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
+  document
+    .getElementById("search-bar")
+    .addEventListener("keydown", async (event) => {
+      // Check if the URL contains "#social", if not, redirect to "#social"
+      if (window.location.hash !== "#social") {
+        window.location.hash = "#social";
+      }
+      // When the Enter key is pressed
+      if (event.key === "Enter") {
+        const searchQuery = document.getElementById("search-bar").value;
+        await loadUserProfile(searchQuery);
+      }
+    });
+
   const appElement = document.getElementById("app");
 
   // Rota tanımları
@@ -17,6 +35,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     social: () => loadSocialPage(appElement),
     login: () => loadLoginPage(appElement),
     signup: () => loadSignupPage(appElement),
+    game: () => game_with_ai(appElement),
+    game_tournament: () => game_tournament(appElement),
   };
 
   // OAuth token değişimi
@@ -26,13 +46,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (code) {
     localStorage.setItem("oauth_token", code);
     try {
-      const response = await fetch("http://127.0.0.1:8000/auth-work/exchange_token/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
-      });
+      const response = await fetch(
+        "http://127.0.0.1:8000/auth-work/exchange_token/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code }),
+        }
+      );
 
       if (!response.ok) throw new Error("Token exchange failed");
 
@@ -43,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       await getOauthUser();
     } catch (error) {
       console.error("Error during token exchange:", error);
-      alert("Token exchange failed: " + error.message);
+      alertSystem.showAlert("Token exchange failed: " + error.message);
     }
   }
 
@@ -62,7 +85,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       loadPage(routeName);
     } catch (error) {
       console.error("Authentication check failed:", error);
-      alert("An error occurred while checking authentication: " + error.message);
+      alertSystem.showAlert(
+        "An error occurred while checking authentication: " + error.message
+      );
     }
   }
 

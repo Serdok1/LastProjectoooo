@@ -1,3 +1,5 @@
+import { alertSystem } from "../../utils/alertSystem.js";
+
 // Form gönderme işlemini yönetme fonksiyonu
 export async function handleFormSubmit(event, profilePictureInput) {
   event.preventDefault();
@@ -31,6 +33,6 @@ export async function handleFormSubmit(event, profilePictureInput) {
     window.location.hash = "home";
   } catch (error) {
     console.error("Error during signup:", error);
-    alert("An error occurred during signup: " + error.message);
+    alertSystem.showAlert("An error occurred during signup: " + error.message);
   }
 }

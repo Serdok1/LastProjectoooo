@@ -1,96 +1,85 @@
+import { alertSystem } from "../../utils/alertSystem.js";
+
 export async function fetchFriendRequests() {
-    try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/user-manage/get_friend_requests/",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`, // JWT token'ı localStorage'dan al
-            "Content-Type": "application/json",
-          },
-        }
-      );
-  
-      // Cevabı JSON olarak çöz
-      const friendRequests = await response.json();
-  
-      // Listeyi gösteren DOM elementini alalım
-      const friendRequestsList = document.getElementById("friend-requests-list");
-  
-      // Eğer istek başarılıysa friend request'leri gösterelim
-      friendRequests.forEach((friend) => {
-        // Her bir arkadaş için liste öğesi oluştur
-        const listItem = document.createElement("li");
-        listItem.classList.add(
-          "list-group-item",
-          "d-flex",
-          "justify-content-between",
-          "align-items-center"
-        );
-  
-        // İçeriği oluştur
-        listItem.innerHTML = `
-                  <div class="d-flex align-items-center">
-                      <img src="${friend.profile_picture}" alt="profile" class="rounded-circle" width="50" height="50">
-                      <div class="ml-3">
-                          <h6 class="mb-0">${friend.first_name} ${friend.last_name}</h6>
-                          <small>@${friend.username}</small>
-                      </div>
-                  </div>
-                  <div>
-                      <button id="accept-btn" class="btn btn-success btn-sm mr-2" onclick="acceptRequest('${friend.username}')">Accept</button>
-                      <button id="decline-btn" class="btn btn-danger btn-sm" onclick="declineRequest('${friend.username}')">Decline</button>
-                  </div>
-              `;
-  
-        // Liste öğesini ul'ye ekleyelim
-        friendRequestsList.appendChild(listItem);
-        document.getElementById("accept-btn").addEventListener("click", () => {
-          acceptRequest(friend.username);
-        });
-        document.getElementById("decline-btn").addEventListener("click", () => {
-          declineRequest(friend.username);
-        });
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/user-manage/get_friend_requests/",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const friendRequests = await response.json();
+    const friendRequestsList = document.getElementById("friend-requests-list");
+
+    // Clear the list first
+    friendRequestsList.innerHTML = "";
+
+    friendRequests.forEach((friend) => {
+      const listItem = document.createElement("li");
+
+      listItem.innerHTML = `
+        <div class="friend-requests-list-item">
+          <img src="${friend.profile_picture}" alt="profile" class="rounded-circle" width="49" height="49">
+          <h6 class="mb-0">${friend.first_name} ${friend.last_name}</h6>
+          <button class="accept-btn btn btn-success btn-sm mr-2">Accept</button>
+          <button class="decline-btn btn btn-danger btn-sm">Decline</button>
+        </div>
+      `;
+
+      friendRequestsList.appendChild(listItem);
+
+      // Add event listeners for each button within the list item
+      listItem.querySelector(".accept-btn").addEventListener("click", async () => {
+        await acceptRequest(friend.username);
       });
+      listItem.querySelector(".decline-btn").addEventListener("click", async () => {
+        await declineRequest(friend.username);
+      });
+    });
+  } catch (error) {
+    alertSystem.showAlert("An error occurred while fetching friend requests: " + error.message);
+    console.error("Error fetching friend requests:", error);
+  }
+
+  async function acceptRequest(username) {
+    try {
+      await fetch("http://127.0.0.1:8000/user-manage/accept_friend_request/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ friend_username: username }),
+      });
+      alertSystem.showAlert("Friend request accepted!");
+      console.log("Friend request accepted!");
+      location.reload();
     } catch (error) {
-      console.error("Error fetching friend requests:", error);
-    }
-  
-    // Kabul etme butonu için fonksiyon
-    async function acceptRequest(username) {
-      try {
-        await fetch("http://127.0.0.1:8000/user-manage/accept_friend_request/", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`, // JWT token'ı
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ friend_username: username }),
-        });
-        console.log("Friend request accepted!");
-        // Tekrar listeyi yükleyelim
-        location.reload();
-      } catch (error) {
-        console.error("Error accepting friend request:", error);
-      }
-    }
-  
-    // Reddetme butonu için fonksiyon
-    async function declineRequest(username) {
-      try {
-        await fetch("/api/decline-friend-request/", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // JWT token'ı
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ friend_username: username }),
-        });
-        alert("Friend request declined!");
-        // Tekrar listeyi yükleyelim
-        location.reload();
-      } catch (error) {
-        console.error("Error declining friend request:", error);
-      }
+      alertSystem.showAlert("An error occurred while accepting friend request: " + error.message);
+      console.error("Error accepting friend request:", error);
     }
   }
+
+  async function declineRequest(username) {
+    try {
+      await fetch("http://127.0.0.1:8000/user-manage/decline_friend_request/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ friend_username: username }),
+      });
+      alertSystem.showAlert("Friend request declined!");
+      location.reload();
+    } catch (error) {
+      alertSystem.showAlert("An error occurred while declining friend request: " + error.message);
+      console.error("Error declining friend request:", error);
+    }
+  }
+}

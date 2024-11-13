@@ -14,46 +14,32 @@ export async function fetchFriendList() {
     );
 
     const friends = await response.json();
-    const friendsList = document.getElementById("friends-list");
-    friendsList.innerHTML = ""; // Clear existing list items before appending
+    const friendList = document.getElementById("friend-list");
+    friendList.innerHTML = ""; // Clear existing list items before appending
 
     friends.forEach((friend) => {
       const listItem = document.createElement("li");
-      listItem.classList.add(
-        "list-group-item",
-        "d-flex",
-        "justify-content-between",
-        "align-items-center"
-      );
-
       const uniqueId = friend.id; // Unique ID for each friend
 
       listItem.innerHTML = `
-        <div class="d-flex align-items-center">
-          <img src="${friend.profile_picture}" alt="profile" class="rounded-circle" width="50" height="50">
-          <div class="ml-3">
-            <h6 class="mb-0">${friend.first_name} ${friend.last_name}</h6>
-            <small>@${friend.username}</small>
-          </div>
-          <span class="p-1"/>
-          <div id="status-friend-${uniqueId}" class="status-friend ${friend.online_status ? 'online' : 'offline'}"></div>
-        </div>
-        <div>
-          <button id="remove-btn-${uniqueId}" class="btn btn-danger btn-sm">Remove</button>
+        <div class="friend-list-item">
+          <img src="${friend.profile_picture}" alt="profile" class="rounded-circle" width="49" height="49"">
+          <div id="status-friend-${uniqueId}" class="small-status-friend ${friend.online_status ? 'online' : 'offline'}"></div>
+          <h6 class="mb-0">${friend.first_name} ${friend.last_name}</h6>
           <button id="message-btn-${uniqueId}" class="btn btn-primary btn-sm">Message</button>
         </div>
       `;
 
-      friendsList.appendChild(listItem);
+      friendList.appendChild(listItem);
 
-      // Add event listener for the Remove button
+/*       // Add event listener for the Remove button
       listItem.querySelector(`#remove-btn-${uniqueId}`).addEventListener("click", () => {
         removeFriend(friend.username);
-      });
+      }); */
 
       // Add event listener for the Message button
       listItem.querySelector(`#message-btn-${uniqueId}`).addEventListener("click", () => {
-        startChatSocket(friend.id, localStorage.getItem("user_id"));
+        startChatSocket(friend.id, localStorage.getItem("user_id"), friend.username);
         console.log("Chat started!", friend.id, localStorage.getItem("user_id"));
       });
 
@@ -65,22 +51,22 @@ export async function fetchFriendList() {
   } catch (error) {
     console.error("Error fetching friend requests:", error);
   }
+}
 
-  // Function to remove a friend
-  async function removeFriend(username) {
-    try {
-      await fetch("http://127.0.0.1:8000/user-manage/remove_friend/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ friend_username: username }),
-      });
-      console.log("Friend removed!");
-      location.reload();
-    } catch (error) {
-      console.error("Error removing friend:", error);
-    }
+// Function to remove a friend
+export async function removeFriend(username) {
+  try {
+    await fetch("http://127.0.0.1:8000/user-manage/remove_friend/", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ friend_username: username }),
+    });
+    console.log("Friend removed!");
+    location.reload();
+  } catch (error) {
+    console.error("Error removing friend:", error);
   }
 }

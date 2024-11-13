@@ -1,9 +1,10 @@
 import { createTwoFAModal } from "../../utils/twoFAModule.js";
+import { alertSystem } from "../../utils/alertSystem.js";
 
 export async function handleLogin(event) {
   event.preventDefault(); // Prevent default form submission
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+  const username = document.getElementById("form-input-user").value;
+  const password = document.getElementById("form-input-pass").value;
   localStorage.clear();
   localStorage.setItem("username", username);
 
@@ -35,6 +36,7 @@ export async function handleLogin(event) {
       }
     })
     .catch((error) => {
+      alertSystem.showAlert("Invalid credentials, please try again.", "danger");
       console.error("Error during login:", error);
       document.getElementById("loginError").textContent =
         "Invalid credentials, please try again.";

@@ -1,6 +1,6 @@
 let activeChatSocket = null; // Track the active WebSocket connection
 
-export async function startChatSocket(friend_id, user_id) {
+export async function startChatSocket(friend_id, user_id, friend_username) {
   // Close existing chat box if it is already open
   let existingChatBox = document.getElementById("chatBox");
   if (existingChatBox) {
@@ -13,30 +13,27 @@ export async function startChatSocket(friend_id, user_id) {
     activeChatSocket = null;
   }
 
+  // Locate the parent container
+  const parentContainer = document.getElementById("every");
+
   // Create a new chat box
   const chatBox = document.createElement("div");
   chatBox.id = "chatBox";
-  chatBox.style.position = "fixed";
-  chatBox.style.bottom = "0";
-  chatBox.style.right = "20px";
-  chatBox.style.width = "300px";
-  chatBox.style.maxHeight = "400px";
-  chatBox.style.border = "1px solid #ccc";
-  chatBox.style.borderRadius = "5px";
-  chatBox.style.backgroundColor = "white";
-  chatBox.style.overflow = "hidden";
+
   chatBox.innerHTML = `
-        <div style="padding: 10px; background-color: #007bff; color: white;">
-            <strong>Chat</strong>
+        <div style="padding: 25px; background-color: #8D5DFE; color: white; border-radius: 30px; display:flex; flex-direction: row; justify-content: space-between; align-items: center;">
+            <p style="margin: 0px; font-size: 16px;">${friend_username}</p>
             <button id="closeChatButton" style="float: right; background: transparent; border: none; color: white;">&times;</button>
         </div>
-        <div id="chatMessages" style="padding: 10px; overflow-y: auto; height: 250px;"></div>
-        <div style="padding: 10px;">
-            <input type="text" id="messageInput" class="form-control" placeholder="Type a message..." />
-            <button id="sendMessageButton" class="btn btn-primary btn-sm mt-2" style="width: 100%;">Send</button>
+        <div id="chatMessages"></div>
+        <div style="display: flex; flex-direction: row; margin-bottom: 14px; justify-content: space-between; align-items: center;">
+            <input type="text" id="messageInput" placeholder="Type..." style="background-color: #BAA0F6; border: hidden; border-radius: 15px; height: 60px; width: 78%; font-size: 14px; padding-left: 18px;"/>
+            <button id="sendMessageButton" style="background-color: #BAA0F6; border: none; color: white; border-radius: 15px; height: 60px; width: 20%; font-size: 14px;">Send</button>
         </div>
     `;
-  document.body.appendChild(chatBox);
+  
+  // Append the chat box to the parent container between the friend list and profile card
+  parentContainer.insertBefore(chatBox, parentContainer.children[1]); // Adjust index as needed
 
   try {
     // Await the WebSocket connection
@@ -59,6 +56,14 @@ export async function startChatSocket(friend_id, user_id) {
       }
       chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the latest message
     };
+
+    document.getElementById("messageInput").addEventListener("keydown", function (event) {
+      // Enter tuşuna basıldığında
+      if (event.key === "Enter") {
+        event.preventDefault(); // Formun varsayılan submit işlemini engeller
+        document.getElementById("sendMessageButton").click(); // Gönderme butonunu tetikler
+      }
+    });
 
     document.getElementById("sendMessageButton").onclick = function () {
       const messageInputDom = document.getElementById("messageInput");
@@ -91,10 +96,53 @@ export async function startChatSocket(friend_id, user_id) {
 
 // Helper function to append messages to chat
 function appendMessage(chatContainer, username, message) {
-  const messageElement = document.createElement("p");
-  messageElement.innerHTML = `<strong>${username}:</strong> ${message}`;
+  const messageElement = document.createElement("div");
+  const isUserMessage = username === localStorage.getItem("username");
+
+  // Apply styles based on whether the message is from the user or friend
+  messageElement.classList.add("message-bubble", isUserMessage ? "user-message" : "friend-message");
+  messageElement.innerHTML = `${message}`;
+  
   chatContainer.appendChild(messageElement);
 }
+
+// CSS styles for message bubbles
+const styleElement = document.createElement("style");
+styleElement.innerHTML = `
+  #chatMessages {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .message-bubble {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 30px;
+    max-width: 75%;
+    min-width: 25%;
+    display: inline-block;
+    word-wrap: break-word;1
+  }
+  .user-message {
+    background-color: #8D5DFE;
+    color: white;
+    align-self: flex-end;
+    text-align: center;
+    margin-left: auto;
+    font-size: 14px;
+  }
+  .friend-message {
+    background-color: #A29FFA;
+    color: white;
+    align-self: flex-start;
+    text-align: center;
+    margin-right: auto;
+    font-size: 14px;
+  }
+`;
+document.head.appendChild(styleElement);
+
 
 // Function to initialize WebSocket
 export async function initializeChatSocket(friend_id, user_id) {
