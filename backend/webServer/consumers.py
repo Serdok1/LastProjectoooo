@@ -120,6 +120,7 @@ class setStatusConsumer(AsyncWebsocketConsumer):
         user.profile.save()
 
     async def receive(self, text_data):
+        print(text_data)
         text_data_json = json.loads(text_data)
         username = text_data_json.get('user')
         status = text_data_json.get('status')

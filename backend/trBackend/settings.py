@@ -76,6 +76,14 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost',
     'http://localhost.com',
     'http://localhost:5500.com',
+    'https://localhost:443',
+    'https://localhost',
+    'https://localhost.com',
+    'https://localhost:443.com',
+    'https://127.0.0.1:443',
+    'https://127.0.0.1',
+    'https://127.0.0.1.com',
+    'https://127.0.0.1:443.com',
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
@@ -99,6 +107,14 @@ CORS_ORIGIN_ALLOW_ALL = False  # CORS_ALLOW_ORIGINS kullanmalısınız
 CSRF_COOKIE_HTTPONLY = False
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5500",  # Frontend'in çalıştığı adresi ekleyin
+    'https://localhost:443',
+    'https://localhost',
+    'https://localhost.com',
+    'https://localhost:443.com',
+    'https://127.0.0.1:443',
+    'https://127.0.0.1',
+    'https://127.0.0.1.com',
+    'https://127.0.0.1:443.com',
 ]
 
 ROOT_URLCONF = 'trBackend.urls'
@@ -204,7 +220,7 @@ SIMPLE_JWT = {
 OAUTH_CLIENT_ID = config('42_client_uid')
 OAUTH_CLIENT_SECRET = config('42_client_secret')
 
-MEDIA_URL = '/backend/media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 ASGI_APPLICATION = 'trBackend.asgi.application'

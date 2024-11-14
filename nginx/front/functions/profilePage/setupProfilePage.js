@@ -1,4 +1,5 @@
 import { getCSRFToken } from "../../utils/getCsrfToken.js";
+import { sendStatusOfflineAndClose } from "../../utils/webSocket.js";
 
 export function setupProfilePage() {
   const token = localStorage.getItem("access_token");
@@ -156,7 +157,8 @@ async function updateProfilePicture(token) {
   }
 }
 
-function signOut() {
+async function signOut() {
+  await sendStatusOfflineAndClose();
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
   window.location.href = "#login";
