@@ -23,6 +23,7 @@ urlpatterns = [
     path('auth-work/', include('authWork.urls')),
     path('two-factor/', include('twoFactor.urls')),
     path('user-manage/', include('userManage.urls')),
+    path('pong-game/', include('pongGame.urls')),
 ]
 
 if settings.DEBUG:

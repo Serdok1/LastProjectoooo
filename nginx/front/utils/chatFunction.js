@@ -31,7 +31,7 @@ export async function startChatSocket(friend_id, user_id, friend_username) {
             <button id="sendMessageButton" style="background-color: #BAA0F6; border: none; color: white; border-radius: 15px; height: 60px; width: 20%; font-size: 14px;">Send</button>
         </div>
     `;
-  
+
   // Append the chat box to the parent container between the friend list and profile card
   parentContainer.insertBefore(chatBox, parentContainer.children[1]); // Adjust index as needed
 
@@ -57,13 +57,15 @@ export async function startChatSocket(friend_id, user_id, friend_username) {
       chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to the latest message
     };
 
-    document.getElementById("messageInput").addEventListener("keydown", function (event) {
-      // Enter tuşuna basıldığında
-      if (event.key === "Enter") {
-        event.preventDefault(); // Formun varsayılan submit işlemini engeller
-        document.getElementById("sendMessageButton").click(); // Gönderme butonunu tetikler
-      }
-    });
+    document
+      .getElementById("messageInput")
+      .addEventListener("keydown", function (event) {
+        // Enter tuşuna basıldığında
+        if (event.key === "Enter") {
+          event.preventDefault(); // Formun varsayılan submit işlemini engeller
+          document.getElementById("sendMessageButton").click(); // Gönderme butonunu tetikler
+        }
+      });
 
     document.getElementById("sendMessageButton").onclick = function () {
       const messageInputDom = document.getElementById("messageInput");
@@ -96,14 +98,36 @@ export async function startChatSocket(friend_id, user_id, friend_username) {
 
 // Helper function to append messages to chat
 function appendMessage(chatContainer, username, message) {
+  
   const messageElement = document.createElement("div");
   const isUserMessage = username === localStorage.getItem("username");
 
-  // Apply styles based on whether the message is from the user or friend
-  messageElement.classList.add("message-bubble", isUserMessage ? "user-message" : "friend-message");
-  messageElement.innerHTML = `${message}`;
-  
+  if (message === "#invite") {
+    // Special handling for #invite messages
+    messageElement.classList.add("message-bubble", "game-invite");
+    messageElement.innerHTML = `
+      <p>Game Invitation</p>
+      <button class="accept-invite-button">Accept Invitation</button>
+    `;
+  } else {
+    // Regular message handling
+    messageElement.classList.add(
+      "message-bubble",
+      isUserMessage ? "user-message" : "friend-message"
+    );
+    messageElement.innerHTML = `${message}`;
+  }
+
   chatContainer.appendChild(messageElement);
+
+  // Attach event listener to the invitation button (if applicable)
+  if (message === "#invite") {
+    const inviteButton = messageElement.querySelector(".accept-invite-button");
+    inviteButton.onclick = function () {
+      alert("Game invitation accepted!");
+      // Add your game invitation logic here
+    };
+  }
 }
 
 // CSS styles for message bubbles
@@ -140,9 +164,34 @@ styleElement.innerHTML = `
     margin-right: auto;
     font-size: 14px;
   }
+  .game-invite {
+    background-color: #4CAF50; /* Green for game invite */
+    color: white;
+    align-self: flex-start;
+    text-align: center;
+    margin-right: auto;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+.accept-invite-button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: white;
+  color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.accept-invite-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+  color: white;
+}
+
 `;
 document.head.appendChild(styleElement);
-
 
 // Function to initialize WebSocket
 export async function initializeChatSocket(friend_id, user_id) {
@@ -152,7 +201,7 @@ export async function initializeChatSocket(friend_id, user_id) {
   const roomName = `${friend_id}_${user_id}`;
   const secretKey = localStorage.getItem("user_secret");
   const chatSocket = new WebSocket(
-    `ws://127.0.0.1:8000/ws/chat/${roomName}/${secretKey}/`
+    `wss://127.0.0.1/ws/chat/${roomName}/${secretKey}/`
   );
 
   // Return a promise that resolves when WebSocket is connected

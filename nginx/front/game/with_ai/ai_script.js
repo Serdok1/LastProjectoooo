@@ -87,6 +87,7 @@ var Game = {
 
         // Create a container to hold the buttons
         const buttonContainer = document.createElement('div');
+        buttonContainer.id = 'difficulty-buttons';
         buttonContainer.style.position = 'absolute';
         buttonContainer.style.top = '50%';
         buttonContainer.style.left = '50%';
@@ -101,6 +102,8 @@ var Game = {
 
         difficulties.forEach((difficulty, index) => {
             const button = document.createElement('button');
+            //add button id
+            button.id = 'difficulty-button-' + index;
             button.textContent = difficulty.label;
             button.style.fontSize = '20px';
             button.style.padding = '10px 20px';
@@ -170,17 +173,16 @@ var Game = {
     },
 
     endGameMenu: async function (text) {
-        await fetch('/api/scores', {
+        await fetch('http://127.0.0.1:8000/pong-game/game_over/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
             },
             body: JSON.stringify({
-                score: Pong.player.score,
-                aiScore: Pong.ai.score,
-                level: Pong.level,
-                date: new Date(),
+                opponent: `AI ${Pong.level}`,
+                user_score: Pong.player.score,
+                opponent_score: Pong.ai.score,
             }),
         })
         // Change the canvas font size and color
@@ -287,6 +289,7 @@ var Game = {
                 else this.ai.y += this.ai.speed / 4;
             }
 
+            this.ai.y += 3;
             // Handle ai (AI) wall collision
             if (this.ai.y >= this.canvas.height - this.ai.height) this.ai.y = this.canvas.height - this.ai.height;
             else if (this.ai.y <= 0) this.ai.y = 0;

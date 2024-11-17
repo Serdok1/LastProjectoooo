@@ -109,10 +109,40 @@
   font-size: 1.2rem;
   font-weight: bold;
 }
-.match-history {
-  max-height: 200px;
-  overflow-y: auto;
+#match-history {
+  height: 50%; /* Adjust as needed */
+  width: 80%;
+  background-color: #BAA0F6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 15px;
+  gap: 10px; /* Space between items */
+  padding: 20px;
+  margin-bottom: 3%;
+  overflow-y: auto; /* Enables vertical scrolling */
+  box-sizing: border-box; /* Ensures padding is included in width and height */
+  scrollbar-color: #8D5DFE #BAA0F6; /* Color of scrollbar */
 }
+
+#match-list-item {
+  width: 90%; /* Slightly reduced width for better fit */
+  height: auto; /* Let the height adapt to content */
+  min-height: 100px; /* Minimum height for items */
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* Distribute content evenly */
+  align-items: center;
+  font-size: 20px;
+  border-radius: 15px;
+  background-color: #fff; /* Add background to make items visually distinct */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+
 #status-p {
   font-size: 48px;
 }
@@ -133,6 +163,16 @@
   color: white;
   font-size: 14px;
   border: none;
+}
+#remove-block {
+  width: 134px;
+  height: 40px;
+  border-radius: 15px;
+  background-color: #8D5DFE;
+  color: white;
+  font-size: 14px;
+  border: none;
+  display: none;
 }
 #block-btn {
   width: 134px;

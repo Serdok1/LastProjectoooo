@@ -1,7 +1,7 @@
 let chatSocket;
 
 export async function webSocket() {
-  chatSocket = new WebSocket(`ws://127.0.0.1:8000/ws/status/`);
+  chatSocket = new WebSocket(`wss://127.0.0.1/ws/status/`);
 
   // Wait for WebSocket connection to open
   try {

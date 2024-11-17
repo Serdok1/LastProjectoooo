@@ -13,6 +13,7 @@ export function loadSocialPage(appElement) {
                     <button id="edit-button">Edit profile</button>
                     <button id="add-friend-btn">Add Friend</button>
                     <button id="block-btn">Block</button>
+                    <button id="remove-block">Unblock</button>
                     <button id="remove-friend-btn">Remove friend</button>
                   </div>
                   <div id="status-indicator" class="status-indicator online"></div>
@@ -23,14 +24,13 @@ export function loadSocialPage(appElement) {
                     <p id="bio" class="text-muted"></p>
                   </div>
                   <div id="stats">
-                    <p id="win-loss-ratio">Win/Loss Ratio: 70%</p>
-                    <p id="matches-won">Matches Won: 30</p>
-                    <p id="matches-lost">Matches Lost: 10</p>
+                    <p id="win-loss-ratio">Win/Loss Ratio: 0%</p>
+                    <p id="matches-won">Matches Won: 0</p>
+                    <p id="matches-lost">Matches Lost: 0</p>
                   </div>
                 </div>
               </div>
               <div id="match-history">
-                <h5>Match History</h5>
                 <ul class="list-group" id="match-history-list">
                   <!-- Match history will be loaded here -->
                 </ul>
@@ -89,8 +89,8 @@ export function loadSocialPage(appElement) {
   });
 }
 
-
-{/* <div class="container mt-5">
+{
+  /* <div class="container mt-5">
 <div class="row justify-content-center">
   <div class="col-lg-8">
     <div id="profile-card">
@@ -146,4 +146,5 @@ export function loadSocialPage(appElement) {
   </div>
   </div>
 </div>
-</div> */}
+</div> */
+}

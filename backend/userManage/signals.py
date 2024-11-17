@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from .models import Profile, Social
 from django.db.models.signals import pre_delete
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from pongGame.models import GameStats
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -23,6 +24,15 @@ def create_user_social(sender, instance, created, **kwargs):
 def save_user_social(sender, instance, **kwargs):
     instance.social.save()
 
+
+@receiver(post_save, sender=User)
+def create_user_game_stats(sender, instance, created, **kwargs):
+    if created:
+        GameStats.objects.create(user=instance, games_played=0, games_won=0, games_lost=0)
+
+@receiver(post_save, sender=User)
+def save_user_game_stats(sender, instance, **kwargs):
+    instance.gamestats.save()
 
 # Blacklist the user's tokens when the user is deleted
 """ @receiver(pre_delete, sender=User)

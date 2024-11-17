@@ -62,6 +62,6 @@ export function game_tournament(appElement) {
         Pong.initialize();  // Pong oyununu başlat
     }
     const script = document.createElement("script");
-    script.src = "./game/tournament/script.js";
+    script.src = "./game/tournament/tournament_script.js";
     document.body.appendChild(script);
 }

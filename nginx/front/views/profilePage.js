@@ -2,8 +2,17 @@ import { setupProfilePage } from '../functions/profilePage/setupProfilePage.js';
 
 export function loadProfilePage(appElement) {
   appElement.innerHTML = `
+  <style>
+  .card {
+    background: linear-gradient(220deg, #8D5DFE, #4D3488);
+    border-radius: 15px;
+    border: none;
+    color: white;
+    margin-bottom: 20px;
+  }
+  </style>
     <div class="container mt-5">
-      <h1 class="text-center mb-4">Profil Sayfası</h1>
+      <h1 class="text-center mb-4 ">Profil Sayfası</h1>
       <div class="card p-4">
         <div class="text-center mb-3 position-relative">
           <img id="profile-picture" src="" class="rounded-circle" alt="Profil Resmi" style="width: 150px; height: 150px; object-fit: cover;">

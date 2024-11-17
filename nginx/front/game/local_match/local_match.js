@@ -28,7 +28,7 @@ export function local_match(appElement) {
     </div id="body">
 `;
   const script = document.createElement("script");
-  script.src = "./game/local_match/script.js";
+  script.src = "./game/local_match/local_script.js";
   document.body.appendChild(script);
   onclose = () => {
     script.remove();
