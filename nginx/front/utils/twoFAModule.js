@@ -36,7 +36,7 @@ async function handle2faSubmit() {
   const code = document.getElementById("2faCode").value;
   const csrfToken = getCSRFToken();
 
-  await fetch("http://127.0.0.1:8000/two-factor/token-after-2fa/", {
+  await fetch("https://127.0.0.1/two-factor/token-after-2fa/", {
     method: "POST",
     headers: {
       "X-CSRFToken": csrfToken,
@@ -76,7 +76,7 @@ async function handleTwoFAOauth() {
   const oauth_code = localStorage.getItem("oauth_access_token");
   const csrfToken = getCSRFToken();
 
-  await fetch("http://127.0.0.1:8000/auth-work/oauth_after_2fa/", {
+  await fetch("https://127.0.0.1/auth-work/oauth_after_2fa/", {
     method: "POST",
     headers: {
       "X-CSRFToken": csrfToken,
@@ -101,7 +101,7 @@ async function handleTwoFAOauth() {
       localStorage.setItem("username", data.username);
       localStorage.setItem("user_id", data.user_id);
       localStorage.setItem("user_secret", data.secret_key);
-      window.history.replaceState({}, document.title, "/front/");
+      window.history.replaceState({}, document.title, "/");
       window.location.hash = "home"; // Redirect to the homepage
     })
     .catch((error) => {

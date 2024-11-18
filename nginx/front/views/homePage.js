@@ -1,62 +1,107 @@
 import tr_lang from '../languages/tr_lang.js';
-import { game_with_ai } from '../game/with_ai/game_with_ai.js';
-import { local_match } from '../game/local_match/local_match.js';
-import { game_tournament } from '../game/tournament/tournament.js';
+import en_lang from '../languages/en_lang.js';
+import fr_lang from '../languages/fr_lang.js';
+
+// Dil haritası
+const languages = {
+  tr: tr_lang,
+  en: en_lang,
+  fr: fr_lang,
+};
+
+// Kullanıcı tercihine göre dil seç
+export function getSelectedLanguage() {
+  const storedLanguage = localStorage.getItem("language");
+  return languages[storedLanguage] || tr_lang; // Varsayılan olarak Türkçe
+}
 
 export function loadHomePage(appElement) {
-  const welcomeMessage = tr_lang.messages.welcome_back.replace("{username}", localStorage.getItem("username"));
+  let currentLang = getSelectedLanguage();
 
+  const welcomeMessage = currentLang.messages.welcome_back.replace(
+    "{username}",
+    localStorage.getItem("username")
+  );
   // Set up the HTML structure with a container for buttons and a content area
   appElement.innerHTML = `
-    <h1>${tr_lang.navigation.home}</h1>
-    <p>${welcomeMessage}</p>
-    <style>
-      #button-container {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-      }
-      #content-area {
-        margin-top: 20px;
-      }
-      button {
-        padding: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: #D1BFFA;
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 0 5px gray;
-      }
-      button:hover {
-        background-color: #A370F2;
-      }
-    </style>
-    <div id="button-container">
-      <button id="game_with_ai_btn">Game with AI</button>
-      <button id="local_match_btn">Local Match</button>
-      <button id="game_tournament_btn">Game Tournament</button>
-    </div>
-    <div id="content-area">
-      <!-- Content for each game will be displayed here -->
-    </div>
+        <h1>${currentLang.navigation.home}</h1>
+        <p>${welcomeMessage}</p>
+        <style>
+          #language-selector {
+            margin-bottom: 15px;
+          }
+          #button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+          }
+          #content-area {
+            margin-top: 20px;
+          }
+          button {
+            padding: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #D1BFFA;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 0 5px gray;
+          }
+          button:hover {
+            background-color: #A370F2;
+          }
+        </style>
+        <div id="language-selector">
+          <label for="language">${currentLang.navigation.langselect}</label>
+          <select id="language">
+            <option value="tr" ${currentLang === tr_lang ? "selected" : ""}>Türkçe</option>
+            <option value="en" ${currentLang === en_lang ? "selected" : ""}>English</option>
+            <option value="fr" ${currentLang === fr_lang ? "selected" : ""}>Français</option>
+          </select>
+        </div>
+        <div id="button-container">
+        <div id="alert-container"></div>
+          <button id="game_with_ai_btn">${currentLang.buttons.game_with_ai}</button>
+          <button id="local_match_btn">${currentLang.buttons.local_match}</button>
+          <button id="game_tournament_btn">${currentLang.buttons.game_tournament}</button>
+        </div>
+        <div id="content-area">
+          <!-- Content for each game will be displayed here -->
+        </div>
   `;
 
-  const contentArea = document.getElementById("content-area");
+  // Dil seçici olay dinleyicisi
+  const languageSelector = document.getElementById("language");
+  languageSelector.addEventListener("change", async (event) => {
+    const selectedLanguage = event.target.value;
+    localStorage.setItem("language", selectedLanguage);
+    await fetch("https://127.0.0.1/user-manage/select_lang_pref/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+      body: JSON.stringify({ lang_pref: selectedLanguage }),
+    }).then(() => {
+      currentLang = getSelectedLanguage();
+      window.location.reload();
+    });
+    window.location.reload();
+  });
 
   // Add event listeners to each button to load the respective game into the content area
   document.getElementById('game_with_ai_btn').addEventListener('click', function () {
-    contentArea.innerHTML = "";  // Clear content area before loading new content
-    game_with_ai(contentArea);
+    window.location.hash = "game_ai";
+    window.location.reload();
   });
 
   document.getElementById('local_match_btn').addEventListener('click', function () {
-    contentArea.innerHTML = "";  // Clear content area before loading new content
-    local_match(contentArea);
+    window.location.hash = "local_match";
+    window.location.reload();
   });
 
   document.getElementById('game_tournament_btn').addEventListener('click', function () {
-    contentArea.innerHTML = "";  // Clear content area before loading new content
-    game_tournament(contentArea);
+    window.location.hash = "game_tournament";
+    window.location.reload();
   });
 }

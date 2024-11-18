@@ -1,4 +1,3 @@
-// Global Variables
 const DIRECTION = {
     IDLE: 0,
     UP: 1,
@@ -7,14 +6,12 @@ const DIRECTION = {
     RIGHT: 4
 };
 
-const rounds = [5];  // Her turda kaç puan alındığında oyun biter
-const colors = ['#1abc9c', '#2ecc71', '#3498db', '#8c52ff', '#9b59b6'];
+const rounds = [5];
 
 let players = [];
 let activePlayers = [];
 let winnerBracket = [];
 
-// The ball object
 const Ball = {
     new: function (canvasWidth, canvasHeight, incrementedSpeed) {
         return {

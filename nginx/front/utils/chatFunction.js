@@ -1,5 +1,10 @@
 let activeChatSocket = null; // Track the active WebSocket connection
 
+import { getSelectedLanguage } from "../views/homePage.js";
+
+const currentLang = getSelectedLanguage();
+
+
 export async function startChatSocket(friend_id, user_id, friend_username) {
   // Close existing chat box if it is already open
   let existingChatBox = document.getElementById("chatBox");
@@ -22,14 +27,14 @@ export async function startChatSocket(friend_id, user_id, friend_username) {
 
   chatBox.innerHTML = `
         <div style="padding: 25px; background-color: #8D5DFE; color: white; border-radius: 30px; display:flex; flex-direction: row; justify-content: space-between; align-items: center;">
-            <p style="margin: 0px; font-size: 16px;">${friend_username}</p>
-            <button id="closeChatButton" style="float: right; background: transparent; border: none; color: white;">&times;</button>
-        </div>
-        <div id="chatMessages"></div>
-        <div style="display: flex; flex-direction: row; margin-bottom: 14px; justify-content: space-between; align-items: center;">
-            <input type="text" id="messageInput" placeholder="Type..." style="background-color: #BAA0F6; border: hidden; border-radius: 15px; height: 60px; width: 78%; font-size: 14px; padding-left: 18px;"/>
-            <button id="sendMessageButton" style="background-color: #BAA0F6; border: none; color: white; border-radius: 15px; height: 60px; width: 20%; font-size: 14px;">Send</button>
-        </div>
+        <p style="margin: 0px; font-size: 16px;">${friend_username}</p>
+        <button id="closeChatButton" style="float: right; background: transparent; border: none; color: white;">&times;</button>
+      </div>
+      <div id="chatMessages"></div>
+      <div style="display: flex; flex-direction: row; margin-bottom: 14px; justify-content: space-between; align-items: center;">
+        <input type="text" id="messageInput" placeholder="Type..." style="background-color: #BAA0F6; border: hidden; border-radius: 15px; height: 60px; width: 78%; font-size: 14px; padding-left: 18px;"/>
+        <button id="sendMessageButton" style="background-color: #BAA0F6; border: none; color: white; border-radius: 15px; height: 60px; width: 20%; font-size: 14px;">${currentLang.social.chat_send}</button>
+      </div>
     `;
 
   // Append the chat box to the parent container between the friend list and profile card
@@ -98,7 +103,7 @@ export async function startChatSocket(friend_id, user_id, friend_username) {
 
 // Helper function to append messages to chat
 function appendMessage(chatContainer, username, message) {
-  
+
   const messageElement = document.createElement("div");
   const isUserMessage = username === localStorage.getItem("username");
 
@@ -124,8 +129,8 @@ function appendMessage(chatContainer, username, message) {
   if (message === "#invite") {
     const inviteButton = messageElement.querySelector(".accept-invite-button");
     inviteButton.onclick = function () {
-      alert("Game invitation accepted!");
-      // Add your game invitation logic here
+      window.location.hash = "game_ai";
+      window.location.reload();
     };
   }
 }

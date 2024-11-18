@@ -72,7 +72,10 @@ var Game = {
         this.color = '#8D5DFE';
 
         // Zorluk menüsünü göster
-        this.selectDifficulty();
+        //this.selectDifficulty();
+        this.isLevelSelected = true;
+        this.level = 'hard'
+        this.startGame(13,13,10);
     },
 
 
@@ -128,7 +131,6 @@ var Game = {
             // Add button to the container
             buttonContainer.appendChild(button);
         });
-
         // Add the button container to the body
         document.body.appendChild(buttonContainer);
     },
@@ -173,7 +175,7 @@ var Game = {
     },
 
     endGameMenu: async function (text) {
-        await fetch('http://127.0.0.1:8000/pong-game/game_over/', {
+        await fetch('https://127.0.0.1/pong-game/game_over/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -288,8 +290,7 @@ var Game = {
                 if (this.ball.moveX === DIRECTION.RIGHT) this.ai.y += this.ai.speed / 1.5;
                 else this.ai.y += this.ai.speed / 4;
             }
-
-            this.ai.y += 3;
+            this.ai.y += 4;
             // Handle ai (AI) wall collision
             if (this.ai.y >= this.canvas.height - this.ai.height) this.ai.y = this.canvas.height - this.ai.height;
             else if (this.ai.y <= 0) this.ai.y = 0;

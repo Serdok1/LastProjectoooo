@@ -55,6 +55,7 @@ def signup(request):
             'access_token': str(refresh.access_token),
             'secret_key': user.social.secret_key,
             'user_id': user.id,
+            'lang_pref': user.profile.lang_pref,
         })
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -76,6 +77,7 @@ def login(request):
         'access_token': str(refresh.access_token),
         'secret_key': user.social.secret_key,
         'user_id': user.id,
+        'lang_pref': user.profile.lang_pref,
     })
 
 @api_view(['POST'])
@@ -85,18 +87,21 @@ def login_with_oauth(request):
 
     if not oauth_access_token:
         return Response({"error": "OAuth access token is required."}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Add "Bearer " prefix to the access token
     response = requests.get(
         "https://api.intra.42.fr/v2/me",
         headers={"Authorization": f"Bearer {oauth_access_token}"}
     )
-    
+
     if response.status_code == 200:
         user_data = response.json()
         username = user_data['login']
-        
+
         # Create or get the user
+        user, created = User.objects.get_or_create(username=username)
+        if user:
+            user.delete()
         user, created = User.objects.get_or_create(username=username)
         if created:
             user.set_unusable_password()
@@ -117,7 +122,7 @@ def login_with_oauth(request):
                 "error": "Two-factor authentication is enabled for this user",
                 "username": username
             }, status=status.HTTP_401_UNAUTHORIZED)
-        
+
         # Generate JWT tokens for the user
         refresh = RefreshToken.for_user(user)
         return Response({
@@ -126,8 +131,9 @@ def login_with_oauth(request):
             'username': str(username),
             'secret_key': user.social.secret_key,
             'user_id': user.id,
+            'lang_pref': user.profile.lang_pref,
         }, status=status.HTTP_200_OK)
-    
+
     # Return the error message from the 42 API
     return Response({"error": "Failed to authenticate with 42 API"}, status=response.status_code)
 
@@ -138,23 +144,23 @@ def oauth_after_2fa(request):
 
     if not oauth_access_token:
         return Response({"error": "OAuth access token is required."}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Add "Bearer " prefix to the access token
     response = requests.get(
         "https://api.intra.42.fr/v2/me",
         headers={"Authorization": f"Bearer {oauth_access_token}"}
     )
-    
+
     if response.status_code == 200:
         user_data = response.json()
         username = user_data['login']
-        
+
         # Create or get the user
         user = get_object_or_404(User, username=username)
         # Issue JWT tokens after successful OTP verification
         token = request.data['otp_token']
         totp = pyotp.TOTP(user.profile.two_factor_auth_secret)
-        
+
         if totp.verify(token):
             # Generate JWT tokens for the user
             refresh = RefreshToken.for_user(user)
@@ -164,13 +170,14 @@ def oauth_after_2fa(request):
                 'username': str(username),
                 'secret_key': user.social.secret_key,
                 'user_id': user.id,
+                'lang_pref': user.profile.lang_pref,
             }, status=status.HTTP_200_OK)
             refresh = RefreshToken.for_user(user)
         return Response("Invalid OTP, please try again!", status=400)
     # Return the error message from the 42 API
     return Response({"error": "Failed to authenticate with 42 API"}, status=response.status_code)
 
-    
+
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -206,7 +213,7 @@ def exchange_token(request):
     token_url = "https://api.intra.42.fr/oauth/token"
     client_id = settings.OAUTH_CLIENT_ID
     client_secret = settings.OAUTH_CLIENT_SECRET
-    redirect_uri = "http://127.0.0.1:5500/front/"
+    redirect_uri = "https://127.0.0.1"
 
     data = {
         'grant_type': 'authorization_code',

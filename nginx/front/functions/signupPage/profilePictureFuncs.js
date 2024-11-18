@@ -1,8 +1,10 @@
+import { alertSystem } from "../../utils/alertSystem.js";
+
 // Varsayılan profil resmini yükleme fonksiyonu
 export async function loadDefaultProfilePicture(profilePictureElement) {
   try {
     const response = await fetch(
-      "http://127.0.0.1:8000/user-manage/get_default_pp/",
+      "https://127.0.0.1/user-manage/get_default_pp/",
       {
         method: "GET",
       }
@@ -12,6 +14,7 @@ export async function loadDefaultProfilePicture(profilePictureElement) {
     const blob = await response.blob();
     profilePictureElement.src = URL.createObjectURL(blob);
   } catch (error) {
+    alertSystem.showAlert("An error occurred while getting default profile picture: " + error.message);
     console.error("Error getting default profile picture:", error);
   }
 }

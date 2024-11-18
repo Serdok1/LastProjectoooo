@@ -1,62 +1,67 @@
-import { fetchFriendList } from "../functions/socialPage/fetchFriendList.js";
-import { fetchFriendRequests } from "../functions/socialPage/fetchFriendRequests.js";
-import { loadProfile } from "../functions/socialPage/loadProfile.js";
+import { fetchFriendList } from '../functions/socialPage/fetchFriendList.js';
+import { fetchFriendRequests } from '../functions/socialPage/fetchFriendRequests.js';
+import { loadProfile } from '../functions/socialPage/loadProfile.js';
+import { getSelectedLanguage } from './homePage.js';
 
 export function loadSocialPage(appElement) {
+
+  const currentLang = getSelectedLanguage();
+
   appElement.innerHTML = `
-          <div id="every">
-            <div id="profile-card">
-              <div id="status-card">
-                <img id="profile-picture" src="" alt="Profile Picture" class="profile-picture">
-                <div id="bottom-card">
-                  <div id="btns">
-                    <button id="edit-button">Edit profile</button>
-                    <button id="add-friend-btn">Add Friend</button>
-                    <button id="block-btn">Block</button>
-                    <button id="remove-block">Unblock</button>
-                    <button id="remove-friend-btn">Remove friend</button>
-                  </div>
-                  <div id="status-indicator" class="status-indicator online"></div>
-                  <h2 id="username">Username</h2>
-                  <div id="name-stuff">
-                    <p id="name-surname">Name Surname</p>
-                    <p id="email">Email: user@example.com</p>
-                    <p id="bio" class="text-muted"></p>
-                  </div>
-                  <div id="stats">
-                    <p id="win-loss-ratio">Win/Loss Ratio: 0%</p>
-                    <p id="matches-won">Matches Won: 0</p>
-                    <p id="matches-lost">Matches Lost: 0</p>
-                  </div>
-                </div>
+        <div id="every">
+        <div id="profile-card">
+          <div id="status-card">
+          <div id="alert-container"></div>
+            <img id="profile-picture" src="" alt="Profile Picture" class="profile-picture">
+            <div id="bottom-card">
+              <div id="btns">
+              <button id="edit-button">${currentLang.social.edit_profile}</button>
+              <button id="add-friend-btn">${currentLang.social.add_friend}</button>
+              <button id="block-btn">${currentLang.social.block}</button>
+              <button id="remove-block">${currentLang.social.unblock}</button>
+              <button id="remove-friend-btn">${currentLang.social.remove_friend}</button>
               </div>
-              <div id="match-history">
-                <ul class="list-group" id="match-history-list">
-                  <!-- Match history will be loaded here -->
-                </ul>
+              <div id="status-indicator" class="status-indicator online"></div>
+              <h2 id="username">${currentLang.social.username}</h2>
+              <div id="name-stuff">
+              <p id="name-surname">${currentLang.social.name_surname}</p>
+              <p id="email">${currentLang.social.email}</p>
+              <p id="bio" class="text-muted"></p>
+              </div>
+              <div id="stats">
+                <canvas id="matchStatsChart" width="400" height="200"></canvas>
+                <p id="win-loss-ratio">${currentLang.social.win_loss_ratio}</p>
+                <p id="matches-won">${currentLang.social.matches_won}</p>
+                <p id="matches-lost">${currentLang.social.matches_lost}</p>
               </div>
             </div>
-            <div class="card text-center">
-              <div>
-                <button id="friend-list-btn" class="btn btn-primary">Friend List</button>
-                <button id="friend-requests-btn" class="btn btn-secondary">Friend Requests</button>
-              </div>
-              <div id="friend-content">
-                <ul id="friend-list" class="list-group list-group-flush">
-                  <!-- Friend list will be loaded here -->
-                </ul>
-                <ul id="friend-requests-list" class="list-group list-group-flush" style="display: none;">
-                  <!-- Friend requests will be loaded here -->
-                </ul>
-              </div>
-              <div class="card-footer text-muted">© 42</div>
-              </div>
           </div>
-          <link rel="stylesheet" href="styles/socialPage.css"
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+          <div id="match-history">
+            <ul class="list-group" id="match-history-list">
+              <!-- Match history will be loaded here -->
+            </ul>
+          </div>
+        </div>
+        <div class="card text-center">
+          <div>
+            <button id="friend-list-btn" class="btn btn-primary">${currentLang.social.friend_list}</button>
+            <button id="friend-requests-btn" class="btn btn-secondary">${currentLang.social.friend_requests}</button>
+          </div>
+          <div id="friend-content">
+            <ul id="friend-list" class="list-group list-group-flush">
+              <!-- Friend list will be loaded here -->
+            </ul>
+            <ul id="friend-requests-list" class="list-group list-group-flush" style="display: none;">
+              <!-- Friend requests will be loaded here -->
+            </ul>
+          </div>
+          <div class="card-footer text-muted">© 42</div>
+          </div>
+      </div>
+      <link rel="stylesheet" href="styles/socialPage.css"
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
       `;
-
   // Load profile on initial page load
   loadProfile();
   // Sayfa yüklendiğinde friend request'leri al
@@ -87,64 +92,4 @@ export function loadSocialPage(appElement) {
     friendRequestsBtn.classList.remove("btn-secondary");
     friendRequestsBtn.classList.add("btn-primary");
   });
-}
-
-{
-  /* <div class="container mt-5">
-<div class="row justify-content-center">
-  <div class="col-lg-8">
-    <div id="profile-card">
-      <div class="d-flex align-items-center">
-        <div class="position-relative me-4">
-          <img id="profile-picture" src="" alt="Profile Picture" class="profile-picture">
-          <div id="status-indicator" class="status-indicator online"></div>
-        </div>
-        <div>
-          <h2 id="username" class="mb-0">Username</h2>
-          <p id="bio" class="text-muted">Bio: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <p id="email">Email: user@example.com</p>
-        </div>
-        <button id="add-friend-btn" class="btn btn-primary ms-auto">Add Friend</button>
-      </div>
-      <div class="row mt-4">
-        <div class="col-md-4 text-center">
-          <div class="win-loss-ratio" id="win-loss-ratio">Win/Loss Ratio: 70%</div>
-        </div>
-        <div class="col-md-4 text-center">
-          <div id="matches-won">Matches Won: 30</div>
-        </div>
-        <div class="col-md-4 text-center">
-          <div id="matches-lost">Matches Lost: 10</div>
-        </div>
-      </div>
-      <div class="mt-4">
-        <h5>Match History</h5>
-        <ul class="list-group match-history" id="match-history">
-          <li class="list-group-item">Match 1: Won</li>
-          <li class="list-group-item">Match 2: Lost</li>
-          <li class="list-group-item">Match 3: Won</li>
-        </ul>
-      </div>
-    </div>
-    <!-- friend "request list -->
-  <div class="card" style="max-height: 400px; overflow-auto;">
-      <div class="card-header">
-          Friend Requests
-      </div>
-      <ul id="friend-requests-list" class="list-group list-group-flush">
-          <!-- Friend request'ler buraya dinamik olarak eklenecek -->
-      </ul>
-  </div>
-  <!-- friend list -->
-  <div class="card" style="max-height: 400px; overflow-auto;">
-      <div class="card-header">
-          Friend List
-      </div>
-      <ul id="friends-list" class="list-group list-group-flush">
-          <!-- Friend buraya dinamik olarak eklenecek -->
-      </ul>
-  </div>
-  </div>
-</div>
-</div> */
 }

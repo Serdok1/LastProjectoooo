@@ -12,29 +12,30 @@ export const alertSystem = (function() {
       }
       return alertContainer;
     }
-  
+
     function showAlert(message, type = 'danger', timeout = 5000) {
-      // Alert div'i oluştur
       const alertDiv = document.createElement('div');
       alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
       alertDiv.role = 'alert';
+      alertDiv.style.zIndex = '4';
       alertDiv.innerHTML = `
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       `;
-  
-      // Uyarıyı göster
+
+      // Alert container'a ekle
       const alertContainer = createAlertContainer();
       alertContainer.appendChild(alertDiv);
-  
-      // Belirtilen süre sonunda uyarıyı kaldır
+
+      // Alert için zamanlayıcı ekle
       setTimeout(() => {
+        // Alert'i gizle
         alertDiv.classList.remove('show');
-        alertDiv.classList.add('hide');
-        setTimeout(() => alertDiv.remove(), 500); // Animasyonun bitmesini bekler
+        alertDiv.classList.add('fade');  // Use fade instead of hide
+        setTimeout(() => alertDiv.remove(), 1500); // Animasyon bitiminden sonra kaldır
       }, timeout);
-    }
-  
+   }
+
     return {
       showAlert
     };

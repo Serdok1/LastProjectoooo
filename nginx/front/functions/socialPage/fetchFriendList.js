@@ -1,9 +1,12 @@
 import { startChatSocket } from "../../utils/chatFunction.js";
+import { getSelectedLanguage } from "../../views/homePage.js";
+
+const	currentLang = getSelectedLanguage();
 
 export async function fetchFriendList() {
   try {
     const response = await fetch(
-      "http://127.0.0.1:8000/user-manage/get_friends/",
+      "https://127.0.0.1/user-manage/get_friends/",
       {
         method: "GET",
         headers: {
@@ -26,7 +29,7 @@ export async function fetchFriendList() {
           <img src="${friend.profile_picture}" alt="profile" class="rounded-circle" width="49" height="49"">
           <div id="status-friend-${uniqueId}" class="small-status-friend ${friend.online_status ? 'online' : 'offline'}"></div>
           <h6 class="mb-0">${friend.first_name} ${friend.last_name}</h6>
-          <button id="message-btn-${uniqueId}" class="btn btn-primary btn-sm">Message</button>
+          <button id="message-btn-${uniqueId}" class="btn btn-primary btn-sm">${currentLang.social.chat}</button>
         </div>
       `;
 
@@ -56,7 +59,7 @@ export async function fetchFriendList() {
 // Function to remove a friend
 export async function removeFriend(username) {
   try {
-    await fetch("http://127.0.0.1:8000/user-manage/remove_friend/", {
+    await fetch("https://127.0.0.1/user-manage/remove_friend/", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,

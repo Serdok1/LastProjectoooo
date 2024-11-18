@@ -1,8 +1,12 @@
 import { alertSystem } from "../../utils/alertSystem.js";
+import { getSelectedLanguage } from "../../views/homePage.js";
+
+const	currentLang = getSelectedLanguage();
+let matchStatsChart = null; // Mevcut grafik referansı
 
 export async function loadProfile(getUser) {
   const token = localStorage.getItem("access_token");
-  const baseUrl = "http://127.0.0.1:8000/user-manage/";
+  const baseUrl = "https://127.0.0.1/user-manage/";
 
   // Başlangıçta profili yükle
   await loadUserProfile(getUser);
@@ -131,7 +135,7 @@ export async function loadProfile(getUser) {
 // Kullanıcı profili yükleme fonksiyonu
 export const loadUserProfile = async (username = "") => {
   const token = localStorage.getItem("access_token");
-  const baseUrl = "http://127.0.0.1:8000/user-manage/";
+  const baseUrl = "https://127.0.0.1/user-manage/";
   const url = new URL(`${baseUrl}get_user_profile/`);
   if (username) url.searchParams.append("username", username);
 
@@ -156,6 +160,8 @@ export const loadUserProfile = async (username = "") => {
     document.getElementById("email").textContent = `${data.user.email}`;
     if (data.profile.bio)
       document.getElementById("bio").textContent = `${data.profile.bio}`;
+    else
+      document.getElementById("bio").textContent = "";
     document.getElementById("profile-picture").src =
       data.profile.profile_picture;
 
@@ -203,7 +209,7 @@ async function fetchMatchHistory(username) {
     username = localStorage.getItem("username");
   }
   const token = localStorage.getItem("access_token");
-  const baseUrl = "http://127.0.0.1:8000/";
+  const baseUrl = "https://127.0.0.1/";
   const url = `${baseUrl}pong-game/get_game_history/`;
 
   try {
@@ -232,7 +238,7 @@ async function fetchMatchHistory(username) {
       else {
         li.style.backgroundColor = "#D1BFFA";
       }
-      li.textContent = `Opponent: ${match.opponent} | Score: ${match.user_score} - ${match.opponent_score} | Date: ${date.toDateString()}`;
+      li.textContent = `${currentLang.social.opponent} ${match.opponent} | ${currentLang.social.score} ${match.user_score} - ${match.opponent_score} | ${currentLang.social.date} ${date.toDateString()}`;
       matchHistory.appendChild(li);
     });
   }
@@ -243,12 +249,12 @@ async function fetchMatchHistory(username) {
   }
 }
 
-async function fetchMatchStats(username){
+async function fetchMatchStats(username) {
   if (!username) {
     username = localStorage.getItem("username");
   }
   const token = localStorage.getItem("access_token");
-  const baseUrl = "http://127.0.0.1:8000/";
+  const baseUrl = "https://127.0.0.1/";
   const url = `${baseUrl}pong-game/get_game_stats/`;
 
   await fetch(url, {
@@ -258,21 +264,57 @@ async function fetchMatchStats(username){
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({username: username}),
+    body: JSON.stringify({ username }),
   })
-  .then(response => {
-    if (!response.ok) throw new Error("Maç istatistikleri alınamadı");
-    return response.json();
-  })
-  .then(data => {
-    console.log(data);
-    document.getElementById("win-loss-ratio").textContent = `Win/Loss Ratio: ${data[0].win_rate * 100}%`;
-    document.getElementById("matches-won").textContent = `Matches Won: ${data[0].games_won}`;
-    document.getElementById("matches-lost").textContent = `Matches Lost: ${data[0].games_lost}`;
-  })
-  .catch(error => {
-    alertSystem.showAlert(
-      "Maç istatistikleri alınırken bir hata oluştu: " + error.message
-    );
+    .then(response => {
+      if (!response.ok) throw new Error("Maç istatistikleri alınamadı");
+      return response.json();
+    })
+    .then(data => {
+      // İstatistikleri DOM'a yerleştir
+      document.getElementById("win-loss-ratio").textContent = `${currentLang.social.win_loss_ratio} ${data[0].win_rate * 100}%`;
+      document.getElementById("matches-won").textContent = `${currentLang.social.matches_won} ${data[0].games_won}`;
+      document.getElementById("matches-lost").textContent = `${currentLang.social.matches_lost} ${data[0].games_lost}`;
+
+      // Grafik oluştur
+      createMatchStatsChart(data[0].games_won, data[0].games_lost);
+    })
+    .catch(error => {
+      alertSystem.showAlert(
+        "Maç istatistikleri alınırken bir hata oluştu: " + error.message
+      );
+    });
+}
+
+function createMatchStatsChart(wins, losses) {
+  const ctx = document.getElementById("matchStatsChart").getContext("2d");
+
+  // Önceki grafik varsa yok et
+  if (matchStatsChart) {
+    matchStatsChart.destroy();
+  }
+
+  // Yeni grafiği oluştur ve referansı sakla
+  matchStatsChart = new Chart(ctx, {
+    type: "doughnut", // veya "bar" ya da "pie"
+    data: {
+      labels: ["Kazançlar", "Kayıplar"],
+      datasets: [{
+        data: [wins, losses],
+        backgroundColor: ["#8D5DFE", "#D1BFFA"], // Renkleri ayarlayın
+        borderColor: ["#4D3488", "#BAA0F6"],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+          position: "top"
+        }
+      }
+    }
   });
 }
+

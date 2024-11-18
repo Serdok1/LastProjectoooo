@@ -10,7 +10,7 @@ export async function isUserAuthenticated() {
 
   try {
     // Verify the access token
-    const verifyResponse = await fetch("http://127.0.0.1:8000/auth-work/token/verify/", {
+    const verifyResponse = await fetch("https://127.0.0.1/auth-work/token/verify/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,7 +23,7 @@ export async function isUserAuthenticated() {
     if (!verifyResponse.ok) {
       if (!refresh_token) throw new Error("Refresh token missing");
 
-      const refreshResponse = await fetch("http://127.0.0.1:8000/auth-work/token/refresh/", {
+      const refreshResponse = await fetch("https://127.0.0.1/auth-work/token/refresh/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export async function getOauthUser() {
   }
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/auth-work/login_with_oauth/", {
+    const response = await fetch("https://127.0.0.1/auth-work/login_with_oauth/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -84,9 +84,10 @@ export async function getOauthUser() {
     localStorage.setItem("username", data.username);
     localStorage.setItem("user_id", data.user_id);
     localStorage.setItem("user_secret", data.secret_key);
+    localStorage.setItem("language", data.lang_pref);
 
     // Clear URL parameters and redirect to home
-    window.history.replaceState({}, document.title, "/front/");
+    window.history.replaceState({}, document.title, "/");
     window.location.hash = "home";
   } catch (error) {
     console.error("Error during login:", error);

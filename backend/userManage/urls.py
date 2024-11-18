@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import user_info,update_user_info, update_profile_picture, get_sent_friend_requests
-from .views import get_default_pp, get_user_profile, send_friend_request, accept_friend_request 
-from .views import decline_friend_request, get_friend_requests, get_friends, remove_friend, block_user, unblock_user
+from .views import get_default_pp, get_user_profile, send_friend_request, accept_friend_request
+from .views import decline_friend_request, get_friend_requests, get_friends, remove_friend, block_user, unblock_user, select_lang_pref
 
 urlpatterns = [
     path('user_info/', user_info, name='user_info'),
@@ -18,4 +18,5 @@ urlpatterns = [
     path('get_sent_friend_requests/', get_sent_friend_requests, name='get_sent_friend_requests'),
     path('block_user/', block_user, name='block_user'),
     path('unblock_user/', unblock_user, name='unblock_user'),
+    path('select_lang_pref/', select_lang_pref, name='select_lang_pref'),
 ]

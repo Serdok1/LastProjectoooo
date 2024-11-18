@@ -8,7 +8,7 @@ export async function handleLogin(event) {
   localStorage.clear();
   localStorage.setItem("username", username);
 
-  await fetch("http://127.0.0.1:8000/auth-work/login/", {
+  await fetch("https://127.0.0.1/auth-work/login/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export async function handleLogin(event) {
         localStorage.setItem("refresh_token", data.refresh_token);
         localStorage.setItem("user_id", data.user_id);
         localStorage.setItem("user_secret", data.secret_key);
-        localStorage.s;
+        localStorage.setItem("language", data.lang_pref);
         window.location.hash = "home"; // Redirect on successful login
       }
     })

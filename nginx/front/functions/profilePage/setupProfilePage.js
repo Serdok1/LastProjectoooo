@@ -4,7 +4,7 @@ import { sendStatusOfflineAndClose } from "../../utils/webSocket.js";
 export function setupProfilePage() {
   const token = localStorage.getItem("access_token");
   const csrfToken = getCSRFToken();
-  
+
   initializeEventListeners(token, csrfToken);
   loadProfileData(token, csrfToken);
 }
@@ -21,7 +21,7 @@ function initializeEventListeners(token, csrfToken) {
 
 async function loadProfileData(token, csrfToken) {
   try {
-    const response = await fetch("http://127.0.0.1:8000/user-manage/user_info/", {
+    const response = await fetch("https://127.0.0.1/user-manage/user_info/", {
       method: "GET",
       credentials: "include",
       headers: { Authorization: `Bearer ${token}` },
@@ -60,7 +60,7 @@ function updateOnlineStatus(isOnline) {
 
 async function enable2FA(token, csrfToken) {
   try {
-    const response = await fetch("http://127.0.0.1:8000/two-factor/generate-qr/", {
+    const response = await fetch("https://127.0.0.1/two-factor/generate-qr/", {
       method: "POST",
       headers: {
         "X-CSRFToken": csrfToken,
@@ -99,11 +99,14 @@ async function submit2FACode() {
   const code = document.getElementById("2fa-code").value;
   const loadingAnimation = document.getElementById("loading-animation");
   loadingAnimation.style.display = "block";
+  const token = localStorage.getItem("access_token");
 
   try {
-    await fetch("http://127.0.0.1:8000/two-factor/verify-otp/", {
+    await fetch("https://127.0.0.1/two-factor/verify-otp/", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
       credentials: "include",
       body: JSON.stringify({ otp_token: code }),
     });
@@ -111,6 +114,8 @@ async function submit2FACode() {
     console.error("Verification error:", error);
   } finally {
     loadingAnimation.style.display = "none";
+    console.log("Verification successful");
+    window.location.reload();
   }
 }
 
@@ -126,13 +131,14 @@ async function updateProfile(event, token) {
   const formData = new FormData(document.getElementById("profile-form"));
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/user-manage/update_user_info/", {
+    const response = await fetch("https://127.0.0.1/user-manage/update_user_info/", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
     const data = await response.json();
     console.log("Profile updated:", data);
+    window.location.reload();
   } catch (error) {
     console.error("Error updating profile:", error);
   }
@@ -145,13 +151,14 @@ async function updateProfilePicture(token) {
   formData.append("profile_picture", file);
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/user-manage/update_profile_picture/", {
+    const response = await fetch("https://127.0.0.1/user-manage/update_profile_picture/", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
     const data = await response.json();
     console.log("Profile picture updated:", data);
+    window.location.reload();
   } catch (error) {
     console.error("Error updating profile picture:", error);
   }

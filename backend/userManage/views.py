@@ -85,13 +85,13 @@ def update_profile_picture(request):
 def get_default_pp(request):
     # Path to the default profile picture
     default_pp_path = os.path.join(settings.MEDIA_ROOT, 'default_pictures/default_picture.png')
-    
+
     # Open the image file in binary mode and return it as a response
     try:
         return FileResponse(open(default_pp_path, 'rb'), content_type='image/png')
     except FileNotFoundError:
         return Response({"error": "Default profile picture not found"}, status=404)
-    
+
 
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
@@ -107,7 +107,7 @@ def get_user_profile(request):
 
     userSerializer = UserSerializer(user)
     profileSerializer = ProfileSerializer(user.profile)
-    
+
     if user in self.social.friendList.all():
         is_friend = True
     else:
@@ -117,7 +117,7 @@ def get_user_profile(request):
         is_blocked = True
     else:
         is_blocked = False
-    
+
     return Response({
         'user': userSerializer.data,
         'profile': profileSerializer.data,
@@ -309,3 +309,12 @@ def unblock_user(request):
     user.social.blockedUsers.remove(user_to_unblock)
     user.social.save()
     return Response("User unblocked successfully!", status=200)
+
+@api_view(['POST'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def select_lang_pref(request):
+    user = request.user
+    user.profile.lang_pref = request.data.get('lang_pref')
+    user.profile.save()
+    return Response("Lang pref changed successfuly!", status=200)

@@ -6,15 +6,25 @@ import { isUserAuthenticated } from "./utils/tokenFuncs.js";
 import { getOauthUser } from "./utils/tokenFuncs.js";
 import { loadSignupPage } from "./views/signupPage.js";
 import { webSocket } from "./utils/webSocket.js";
-import { game_with_ai } from "./game/with_ai/game_with_ai.js";
-import { game_tournament } from "./game/tournament/tournament.js";
+import { game_with_ai } from "./views/game_with_ai.js";
+import { local_match } from "./views/local_match.js"
 import { alertSystem } from "./utils/alertSystem.js";
 import { loadUserProfile } from "./functions/socialPage/loadProfile.js";
+import	{ getSelectedLanguage } from './views/homePage.js';
+import { game_tournament } from "./views/tournament.js";
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   let typingTimer; // Timer identifier
   const typingDelay = 300; // Delay time in milliseconds (2 seconds)
-  
+
+  const currentLang = getSelectedLanguage(); // Dil bilgilerini al
+
+	document.getElementById("home").innerText = currentLang.navigation.home; // Dinamik metin güncelleme
+	document.getElementById("social").innerText = currentLang.navigation.social;
+	document.getElementById("profile").innerText = currentLang.navigation.profile;
+	document.getElementById("search-bar").placeholder = currentLang.navigation.search;
+
   document.getElementById("search-bar").addEventListener("keydown", async() => {
     // Check if the URL contains "#social", if not, redirect to "#social"
     if (window.location.hash !== "#social") {
@@ -26,16 +36,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       const searchQuery = document.getElementById("search-bar").value;
       await loadUserProfile(searchQuery);
     }
-  
+
     // Clear the previous timer whenever a new key is pressed
     clearTimeout(typingTimer);
-  
+
     // Set a new timer to execute after typing delay
     typingTimer = setTimeout(async () => {
       const searchQuery = document.getElementById("search-bar").value;
       await loadUserProfile(searchQuery);
     }, typingDelay);
-  });  
+  });
 
   const appElement = document.getElementById("app");
 
@@ -48,6 +58,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     signup: () => loadSignupPage(appElement),
     game: () => game_with_ai(appElement),
     game_tournament: () => game_tournament(appElement),
+    game_ai: () => game_with_ai(appElement),
+    local_match: () => local_match(appElement),
+
   };
 
   // OAuth token değişimi
@@ -58,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.setItem("oauth_token", code);
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/auth-work/exchange_token/",
+        "https://127.0.0.1/auth-work/exchange_token/",
         {
           method: "POST",
           headers: {

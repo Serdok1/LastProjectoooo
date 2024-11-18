@@ -26,7 +26,7 @@ services:
     image: "redis:latest"  # Redis servisini tanımlayın
     ports:
       - "6379:6379"  # Redis portunu açın
-  
+
   nginx:
     build: ./nginx
     image: nginx:latest
@@ -42,3 +42,43 @@ services:
       - "443:443"
     depends_on:
       - web  # Ensure Nginx waits for the web service to be available
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./Devops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./Devops/prometheus/rules.yml:/etc/prometheus/rules.yml
+    restart: always
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - ./Devops/grafana/main.yaml:/etc/grafana/provisioning/dashboards/main.yaml
+      - ./Devops/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./Devops/grafana/data-sources:/etc/grafana/provisioning/datasources
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.rootfs=/host'
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge

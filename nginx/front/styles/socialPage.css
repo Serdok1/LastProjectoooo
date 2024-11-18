@@ -11,7 +11,7 @@
 }
 #status-card {
   width: 938px;
-  height: 270px;
+  height: 370px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -21,7 +21,7 @@
 }
 #bottom-card {
   width: 938px;
-  height: 228px;
+  height: 328px;
   border-radius: 15px;
   background-color: #BAA0F6;
   margin-top: 83px;
@@ -63,20 +63,20 @@
   position: relative;
 }
 #friend-list {
-  max-height: 360px;
+  max-height: 20%;
   list-style-type: none;
   margin: 0;
   padding: 0;
   gap: 10px;
 }
 #friend-requests-list {
-  max-height: 360px;
+  max-height: 20%;
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 .friend-list-item {
-  width: 325px;
+  width: 100%;
   height: 53px;
   padding-left: 3px;
   display: flex;
@@ -88,7 +88,7 @@
   color: white;
 }
 .friend-requests-list-item {
-  width: 325px;
+  width: 100%;
   height: 53px;
   padding-left: 3px;
   display: flex;
@@ -215,7 +215,7 @@
   padding-top: 50px;
 }
 .card {
-  width: 365px;
+  width: 25%;
   height: 85%;
   background-color: #D1BFFA;
   border-radius: 15px;
@@ -227,7 +227,7 @@
   padding: 20px;
 }
 #chatBox {
-  width: 365px;
+  width: 25%;
   height: 85%;
   background-color: #D1BFFA;
   border-radius: 15px;
@@ -249,7 +249,23 @@
   margin-right: 15px;
 }
 #stats {
-    display: flex; 
+    display: flex;
     flex-direction: row;
     gap: 10px;
+    height: 60%;
+    align-items: center;
+}
+
+#alert-container {
+  z-index: 1100; /* Yüksek bir z-index verin */
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 10px;
+}
+
+#matchStatsChart {
+  max-width: 20%;
+  max-height: 60%;
+  align-self: flex-start;
 }

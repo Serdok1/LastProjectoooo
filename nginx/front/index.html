@@ -15,12 +15,12 @@
         margin: 0;
         background-color: #A381F2;
       }
-      
+
       nav {
         background-color: #A381F2;
         z-index: 1;
       }
-      
+
       #app {
         background-color: #A381F2;
         height: 100%;
@@ -38,22 +38,23 @@
         background-color: #D1BFFA;
       }
     </style>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
      <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light d-flex flex-row justify-content-between">
-      <a class="navbar-brand" href="#">My SPA</a>
+      <a class="navbar-brand" href="#">PONG GAME!</a>
       <input id="search-bar" type="text" placeholder="Search" aria-label="Search" aria-describedby="basic-addon1">
       <div>
         <ul class="navbar-nav ml-auto">
           <li class="nav-item">
-            <a class="nav-link" href="#home">Home</a>
+            <a class="nav-link" id="home" href="#home"></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#social">Social</a>
+            <a class="nav-link" id="social" href="#social"></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#profile">Profile</a>
+            <a class="nav-link" id="profile" href="#profile"></a>
           </li>
         </ul>
       </div>

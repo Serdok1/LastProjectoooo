@@ -1,9 +1,12 @@
 import { alertSystem } from "../../utils/alertSystem.js";
+import { getSelectedLanguage } from "../../views/homePage.js";
+
+const currentLang = getSelectedLanguage();
 
 export async function fetchFriendRequests() {
   try {
     const response = await fetch(
-      "http://127.0.0.1:8000/user-manage/get_friend_requests/",
+      "https://127.0.0.1/user-manage/get_friend_requests/",
       {
         method: "GET",
         headers: {
@@ -26,8 +29,8 @@ export async function fetchFriendRequests() {
         <div class="friend-requests-list-item">
           <img src="${friend.profile_picture}" alt="profile" class="rounded-circle" width="49" height="49">
           <h6 class="mb-0">${friend.first_name} ${friend.last_name}</h6>
-          <button class="accept-btn btn btn-success btn-sm mr-2">Accept</button>
-          <button class="decline-btn btn btn-danger btn-sm">Decline</button>
+          <button class="accept-btn btn btn-success btn-sm mr-2">${currentLang.social.accept}</button>
+          <button class="decline-btn btn btn-danger btn-sm">${currentLang.social.decline}</button>
         </div>
       `;
 
@@ -48,7 +51,7 @@ export async function fetchFriendRequests() {
 
   async function acceptRequest(username) {
     try {
-      await fetch("http://127.0.0.1:8000/user-manage/accept_friend_request/", {
+      await fetch("https://127.0.0.1/user-manage/accept_friend_request/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -67,7 +70,7 @@ export async function fetchFriendRequests() {
 
   async function declineRequest(username) {
     try {
-      await fetch("http://127.0.0.1:8000/user-manage/decline_friend_request/", {
+      await fetch("https://127.0.0.1/user-manage/decline_friend_request/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,

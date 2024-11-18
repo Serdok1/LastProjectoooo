@@ -8,7 +8,6 @@ const DIRECTION = {
 };
 
 const rounds = [5];
-const colors = ['#1abc9c', '#2ecc71', '#3498db', '#8c52ff', '#9b59b6'];
 
 // The ball object
 const Ball = {
@@ -65,7 +64,7 @@ const Game = {
         this.listen();
     },
 
-    endGameMenu: function (text) {
+    endGameMenu: async function (text) {
         this.context.font = '45px Courier New';
         this.context.fillStyle = this.color;
 

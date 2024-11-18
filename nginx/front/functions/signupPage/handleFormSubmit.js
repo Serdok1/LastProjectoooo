@@ -16,7 +16,7 @@ export async function handleFormSubmit(event, profilePictureInput) {
   }
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/auth-work/signup/", {
+    const response = await fetch("https://127.0.0.1/auth-work/signup/", {
       method: "POST",
       body: formData,
       credentials: "include",
@@ -25,13 +25,18 @@ export async function handleFormSubmit(event, profilePictureInput) {
       },
     });
 
-    if (!response.ok) throw new Error("Signup failed");
+    if (!response.ok) {
+      const errorData = await response.json(); // Hata detaylarını al
+      const errorMessage = errorData.username ? errorData.username[0] : "An unknown error occurred.";
+      throw new Error(errorMessage);
+    }
 
     const data = await response.json();
     console.log("Signup successful!");
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
     localStorage.setItem("username", formData.get("username"));
+    localStorage.setItem("language", data.lang_pref);
     window.location.hash = "home";
   } catch (error) {
     console.error("Error during signup:", error);
